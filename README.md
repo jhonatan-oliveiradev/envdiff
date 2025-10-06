@@ -105,22 +105,26 @@ EnvDiff mantém a identidade visual da **RIMG+**:
 O arquivo `.env` já foi criado com:
 
 ```env
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://..."
 ```
 
-### Migrar para PostgreSQL
+### 🔐 Autenticação no Liferay STG
 
-1. Instale `pg`
-2. Atualize `prisma/schema.prisma`:
+Se os ambientes GREEN/BLUE exigem autenticação, configure as variáveis:
 
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+```env
+LIFERAY_LOGIN_URL=https://seu-liferay-stg.com/c/portal/login
+LIFERAY_USER=service.account@empresa.com
+LIFERAY_PASS=sua-senha-segura
 ```
 
-3. Execute `npx prisma migrate dev`
+📖 **Documentação completa**: [LIFERAY_AUTH.md](./LIFERAY_AUTH.md)
+
+**Recursos:**
+- ✅ Login automático via Playwright
+- ✅ Reutilização de sessão (storage state)
+- ✅ Suporte a seletores customizados
+- ✅ Fallback para URLs públicas
 
 ## 📂 Estrutura do Projeto
 

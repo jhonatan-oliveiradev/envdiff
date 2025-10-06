@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ComparisonRequestSchema } from "@/lib/types";
 import { comparePixels } from "@/lib/pixel-diff";
 import { compareDom } from "@/lib/dom-diff";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, readFile, access } from "fs/promises";
 import { join } from "path";
 import { chromium } from "playwright-core";
 import chromiumPkg from "@sparticuz/chromium";
@@ -84,12 +84,83 @@ async function processComparison(
 		browser = await chromium.launch({
 			headless: true,
 			executablePath,
-			args: isProduction
-				? chromiumPkg.args
-				: [],
+			args: isProduction ? chromiumPkg.args : []
 		});
 
-		const context = await browser.newContext();
+		// --- AUTH / storageState handling ---
+		// Diretório para armazenar storageState (persistência em /tmp)
+		const authDir = isProduction
+			? join("/tmp", "auth")
+			: join(process.cwd(), "tmp", "auth");
+		await mkdir(authDir, { recursive: true });
+
+		// Usa uma chave global por ambiente (reutiliza entre comparações)
+		const storagePath = join(authDir, "liferay-stg-session.json");
+
+		// Função de login básica — ajusta seletores conforme seu Liferay
+		async function performLogin(page: import("playwright-core").Page) {
+			const loginUrl = process.env.LIFERAY_LOGIN_URL;
+			const user = process.env.LIFERAY_USER;
+			const pass = process.env.LIFERAY_PASS;
+			const userSel =
+				process.env.LIFERAY_USER_SELECTOR ?? 'input[name="login"]';
+			const passSel =
+				process.env.LIFERAY_PASS_SELECTOR ?? 'input[name="password"]';
+			const submitSel =
+				process.env.LIFERAY_SUBMIT_SELECTOR ?? 'button[type="submit"]';
+
+			if (!loginUrl || !user || !pass) {
+				console.warn(
+					"⚠️  LIFERAY_LOGIN_URL/USER/PASS não configurados - pulando autenticação"
+				);
+				return; // Não faz login se não tiver credenciais
+			}
+
+			console.log(`🔐 Fazendo login no Liferay: ${loginUrl}`);
+			await page.goto(loginUrl, { waitUntil: "networkidle", timeout: 30000 });
+			await page.fill(userSel, user);
+			await page.fill(passSel, pass);
+			await Promise.all([
+				page.waitForNavigation({ waitUntil: "networkidle", timeout: 30000 }),
+				page.click(submitSel)
+			]);
+			// Espera extra se Liferay redirecionar via JS
+			await page.waitForTimeout(2000);
+			console.log("✅ Login realizado com sucesso");
+		}
+
+		// Cria contexto reutilizando storageState se existir, senão faz login e salva
+		let context;
+		const hasAuth =
+			process.env.LIFERAY_LOGIN_URL &&
+			process.env.LIFERAY_USER &&
+			process.env.LIFERAY_PASS;
+
+		if (hasAuth) {
+			try {
+				await access(storagePath);
+				// Arquivo existe -> reutiliza sessão
+				console.log("♻️  Reutilizando sessão salva do Liferay");
+				const raw = await readFile(storagePath, "utf8");
+				const state = JSON.parse(raw);
+				context = await browser.newContext({ storageState: state });
+			} catch {
+				// Não existe -> criar, logar e salvar
+				console.log("🆕 Criando nova sessão no Liferay");
+				context = await browser.newContext();
+				const loginPage = await context.newPage();
+				await performLogin(loginPage);
+				// Salva estado para reaproveitamento
+				await context.storageState({ path: storagePath });
+				await loginPage.close();
+				console.log("💾 Sessão salva em:", storagePath);
+			}
+		} else {
+			// Sem autenticação configurada
+			console.log("⚠️  Executando sem autenticação (URLs públicas)");
+			context = await browser.newContext();
+		}
+
 		const page = await context.newPage();
 
 		// Processa cada viewport
@@ -100,35 +171,45 @@ async function processComparison(
 			await page.setViewportSize(viewport);
 
 			// Captura screenshot GREEN
-			await page.goto(data.greenUrl, { waitUntil: "networkidle", timeout: 30000 });
-			
+			await page.goto(data.greenUrl, {
+				waitUntil: "networkidle",
+				timeout: 30000
+			});
+
 			// Aplica máscaras
 			for (const selector of data.maskSelectors) {
-				await page.$$eval(selector, (elements) => {
-					elements.forEach((el) => {
-						(el as HTMLElement).style.visibility = "hidden";
+				await page
+					.$$eval(selector, (elements) => {
+						elements.forEach((el) => {
+							(el as HTMLElement).style.visibility = "hidden";
+						});
+					})
+					.catch(() => {
+						// Ignora se o seletor não for encontrado
 					});
-				}).catch(() => {
-					// Ignora se o seletor não for encontrado
-				});
 			}
-			
+
 			const greenScreenshot = await page.screenshot({ fullPage: true });
 
 			// Captura screenshot BLUE
-			await page.goto(data.blueUrl, { waitUntil: "networkidle", timeout: 30000 });
-			
+			await page.goto(data.blueUrl, {
+				waitUntil: "networkidle",
+				timeout: 30000
+			});
+
 			// Aplica máscaras
 			for (const selector of data.maskSelectors) {
-				await page.$$eval(selector, (elements) => {
-					elements.forEach((el) => {
-						(el as HTMLElement).style.visibility = "hidden";
+				await page
+					.$$eval(selector, (elements) => {
+						elements.forEach((el) => {
+							(el as HTMLElement).style.visibility = "hidden";
+						});
+					})
+					.catch(() => {
+						// Ignora se o seletor não for encontrado
 					});
-				}).catch(() => {
-					// Ignora se o seletor não for encontrado
-				});
 			}
-			
+
 			const blueScreenshot = await page.screenshot({ fullPage: true });
 
 			// Salva screenshots
@@ -173,13 +254,23 @@ async function processComparison(
 		let domDiffResult = null;
 		if (data.compareDom) {
 			// Busca HTML de ambas as páginas
-			await page.goto(data.greenUrl, { waitUntil: "networkidle", timeout: 30000 });
+			await page.goto(data.greenUrl, {
+				waitUntil: "networkidle",
+				timeout: 30000
+			});
 			const greenHtml = await page.content();
-			
-			await page.goto(data.blueUrl, { waitUntil: "networkidle", timeout: 30000 });
+
+			await page.goto(data.blueUrl, {
+				waitUntil: "networkidle",
+				timeout: 30000
+			});
 			const blueHtml = await page.content();
-			
-			domDiffResult = await compareDom(greenHtml, blueHtml, data.ignoreSelectors);
+
+			domDiffResult = await compareDom(
+				greenHtml,
+				blueHtml,
+				data.ignoreSelectors
+			);
 		}
 
 		// Atualiza o registro com os resultados
