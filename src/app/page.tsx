@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Upload } from "lucide-react";
 
 export default function Home() {
 	const router = useRouter();
@@ -87,12 +89,18 @@ export default function Home() {
 							<circle cx="12" cy="12" r="1" />
 						</svg>
 					</div>
-					<div>
+					<div className="flex-1">
 						<h1 className="text-3xl font-bold tracking-tight">EnvDiff</h1>
 						<p className="text-muted-foreground">
 							Comparação automática de ambientes GREEN e BLUE
 						</p>
 					</div>
+					<Link href="/compare/manual">
+						<Button variant="outline" size="lg">
+							<Upload className="w-4 h-4 mr-2" />
+							Comparação Manual
+						</Button>
+					</Link>
 				</div>
 
 				<Card>

@@ -11,11 +11,13 @@ Durante o processo de "freezing" e sincronização entre ambientes GREEN e BLUE 
 ### MVP (Implementado)
 
 - ✅ **Screenshots Automáticos**: Usa Playwright para capturar screenshots determinísticos
+- ✅ **Comparação Manual**: Upload de 2 screenshots para comparação direta (sem autenticação)
 - ✅ **Comparação Pixel a Pixel**: Algoritmo de diff visual com pixelmatch
 - ✅ **Máscaras Customizáveis**: Oculte elementos dinâmicos (relógios, carrosséis, banners)
 - ✅ **Comparação DOM**: Analisa diferenças estruturais no HTML
 - ✅ **Relatórios Visuais**: Interface intuitiva para visualizar diferenças
 - ✅ **Múltiplos Viewports**: Suporte para desktop (1366x768)
+- ✅ **Autenticação Liferay**: Login automático em ambientes STG protegidos
 
 ### Próximas Funcionalidades
 
@@ -39,6 +41,20 @@ Durante o processo de "freezing" e sincronização entre ambientes GREEN e BLUE 
 - **Linguagem**: TypeScript
 
 ## 🚀 Como Usar
+
+### Opção 1: Comparação Manual (Sem Autenticação) ⚡
+
+**Perfeito para testar sem configurar autenticação!**
+
+1. Acesse `/compare/manual`
+2. Faça upload de dois screenshots (GREEN e BLUE)
+3. Ajuste a sensibilidade (opcional)
+4. Clique em "Comparar Imagens"
+5. Veja as diferenças destacadas em vermelho
+
+📖 **Documentação**: [MANUAL_COMPARISON.md](./MANUAL_COMPARISON.md)
+
+### Opção 2: Comparação Automática (Com URLs)
 
 ### Instalação
 
