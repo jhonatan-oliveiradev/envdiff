@@ -4,10 +4,10 @@ import { join } from "path";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { comparisonId: string; filename: string } }
+	{ params }: { params: Promise<{ comparisonId: string; filename: string }> }
 ) {
 	try {
-		const { comparisonId, filename } = params;
+		const { comparisonId, filename } = await params;
 
 		// Em produção (Vercel), screenshots estão em /tmp
 		const isProduction = process.env.VERCEL === "1";
