@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ComparisonRequestSchema } from "@/lib/types";
-import { takeScreenshot } from "@/lib/screenshot";
 import { comparePixels } from "@/lib/pixel-diff";
 import { compareDom } from "@/lib/dom-diff";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
-import { chromium } from "playwright";
+import { chromium } from "playwright-core";
+import chromiumPkg from "@sparticuz/chromium";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -63,87 +63,132 @@ async function processComparison(
 		compareHttp: boolean;
 	}
 ) {
+	let browser;
 	try {
 		const visualResults = [];
 
-		// Cria diretório para screenshots
-		const screenshotsDir = join(
-			process.cwd(),
-			"public",
-			"screenshots",
-			comparisonId
-		);
+		// Em produção (Vercel), usa /tmp que é writable
+		// Em desenvolvimento, usa public/screenshots
+		const isProduction = process.env.VERCEL === "1";
+		const screenshotsDir = isProduction
+			? join("/tmp", "screenshots", comparisonId)
+			: join(process.cwd(), "public", "screenshots", comparisonId);
+
 		await mkdir(screenshotsDir, { recursive: true });
 
-		// Para cada viewport
+		// Inicia browser com configurações para Vercel
+		const executablePath = isProduction
+			? await chromiumPkg.executablePath()
+			: undefined;
+
+		browser = await chromium.launch({
+			headless: true,
+			executablePath,
+			args: isProduction
+				? chromiumPkg.args
+				: [],
+		});
+
+		const context = await browser.newContext();
+		const page = await context.newPage();
+
+		// Processa cada viewport
 		for (const viewport of data.viewports) {
 			const viewportKey = `${viewport.width}x${viewport.height}`;
 
-			// Tira screenshots
-			const greenBuffer = await takeScreenshot({
-				url: data.greenUrl,
-				viewport,
-				maskSelectors: data.maskSelectors
-			});
+			// Define viewport
+			await page.setViewportSize(viewport);
 
-			const blueBuffer = await takeScreenshot({
-				url: data.blueUrl,
-				viewport,
-				maskSelectors: data.maskSelectors
-			});
+			// Captura screenshot GREEN
+			await page.goto(data.greenUrl, { waitUntil: "networkidle", timeout: 30000 });
+			
+			// Aplica máscaras
+			for (const selector of data.maskSelectors) {
+				await page.$$eval(selector, (elements) => {
+					elements.forEach((el) => {
+						(el as HTMLElement).style.visibility = "hidden";
+					});
+				}).catch(() => {
+					// Ignora se o seletor não for encontrado
+				});
+			}
+			
+			const greenScreenshot = await page.screenshot({ fullPage: true });
+
+			// Captura screenshot BLUE
+			await page.goto(data.blueUrl, { waitUntil: "networkidle", timeout: 30000 });
+			
+			// Aplica máscaras
+			for (const selector of data.maskSelectors) {
+				await page.$$eval(selector, (elements) => {
+					elements.forEach((el) => {
+						(el as HTMLElement).style.visibility = "hidden";
+					});
+				}).catch(() => {
+					// Ignora se o seletor não for encontrado
+				});
+			}
+			
+			const blueScreenshot = await page.screenshot({ fullPage: true });
 
 			// Salva screenshots
 			const greenPath = join(screenshotsDir, `green-${viewportKey}.png`);
 			const bluePath = join(screenshotsDir, `blue-${viewportKey}.png`);
-			await writeFile(greenPath, greenBuffer);
-			await writeFile(bluePath, blueBuffer);
+			const diffPath = join(screenshotsDir, `diff-${viewportKey}.png`);
+
+			await writeFile(greenPath, greenScreenshot);
+			await writeFile(bluePath, blueScreenshot);
 
 			// Compara pixels
-			const diffResult = comparePixels(
-				greenBuffer,
-				blueBuffer,
+			const pixelComparison = comparePixels(
+				greenScreenshot,
+				blueScreenshot,
 				data.pixelThreshold
 			);
 
-			// Salva diff
-			const diffPath = join(screenshotsDir, `diff-${viewportKey}.png`);
-			await writeFile(diffPath, diffResult.diffBuffer);
+			// Salva diff visual
+			await writeFile(diffPath, pixelComparison.diffBuffer);
 
-			visualResults.push({
-				viewport,
-				greenScreenshot: `/screenshots/${comparisonId}/green-${viewportKey}.png`,
-				blueScreenshot: `/screenshots/${comparisonId}/blue-${viewportKey}.png`,
-				diffScreenshot: `/screenshots/${comparisonId}/diff-${viewportKey}.png`,
-				diffPercentage: diffResult.diffPercentage,
-				diffPixels: diffResult.diffPixels,
-				totalPixels: diffResult.totalPixels
-			});
+			// Monta resultado para este viewport
+			const visualResult = {
+				viewport: viewportKey,
+				greenUrl: isProduction
+					? `/api/screenshots/${comparisonId}/green-${viewportKey}.png`
+					: `/screenshots/${comparisonId}/green-${viewportKey}.png`,
+				blueUrl: isProduction
+					? `/api/screenshots/${comparisonId}/blue-${viewportKey}.png`
+					: `/screenshots/${comparisonId}/blue-${viewportKey}.png`,
+				diffUrl: isProduction
+					? `/api/screenshots/${comparisonId}/diff-${viewportKey}.png`
+					: `/screenshots/${comparisonId}/diff-${viewportKey}.png`,
+				diffPixels: pixelComparison.diffPixels,
+				diffPercentage: pixelComparison.diffPercentage,
+				passed: pixelComparison.diffPercentage < 0.5 // 0.5% threshold
+			};
+
+			visualResults.push(visualResult);
 		}
 
-		// Compara DOM se solicitado
-		let domDiff = null;
+		// DOM comparison
+		let domDiffResult = null;
 		if (data.compareDom) {
-			const browser = await chromium.launch({ headless: true });
-			const page = await browser.newPage();
-
-			await page.goto(data.greenUrl, { waitUntil: "networkidle" });
-			const htmlGreen = await page.content();
-
-			await page.goto(data.blueUrl, { waitUntil: "networkidle" });
-			const htmlBlue = await page.content();
-
-			await browser.close();
-
-			domDiff = await compareDom(htmlGreen, htmlBlue);
+			// Busca HTML de ambas as páginas
+			await page.goto(data.greenUrl, { waitUntil: "networkidle", timeout: 30000 });
+			const greenHtml = await page.content();
+			
+			await page.goto(data.blueUrl, { waitUntil: "networkidle", timeout: 30000 });
+			const blueHtml = await page.content();
+			
+			domDiffResult = await compareDom(greenHtml, blueHtml, data.ignoreSelectors);
 		}
 
-		// Atualiza registro com resultados
+		// Atualiza o registro com os resultados
 		await prisma.comparison.update({
 			where: { id: comparisonId },
 			data: {
-				status: "done",
+				status: "completed",
 				visualResults: JSON.stringify(visualResults),
-				domDiff: domDiff ? JSON.stringify(domDiff) : null
+				domDiff: domDiffResult ? JSON.stringify(domDiffResult) : null
 			}
 		});
 	} catch (error) {
@@ -155,5 +200,9 @@ async function processComparison(
 				status: "failed"
 			}
 		});
+	} finally {
+		if (browser) {
+			await browser.close();
+		}
 	}
 }
