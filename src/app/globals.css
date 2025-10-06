@@ -1,26 +1,796 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
+    /* EnvDiff - RIMG+ Design System */
+    --radius: 0.65rem;
+
+    /* Light Mode - RIMG+ Colors */
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --card: #ffffff;
+    --card-foreground: #0a0a0a;
+    --popover: #ffffff;
+    --popover-foreground: #0a0a0a;
+
+    /* RIMG+ Primary - Azul #0A66FF */
+    --primary: #0A66FF;
+    --primary-foreground: #ffffff;
+
+    /* Secondary & Muted */
+    --secondary: #f4f4f5;
+    --secondary-foreground: #0a0a0a;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --accent: #f4f4f5;
+    --accent-foreground: #0a0a0a;
+
+    /* Destructive */
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    /* Borders & Inputs */
+    --border: #e4e4e7;
+    --input: #e4e4e7;
+    --ring: #0A66FF;
+
+    /* Chart Colors */
+    --chart-1: #0A66FF;
+    --chart-2: #10b981;
+    --chart-3: #f59e0b;
+    --chart-4: #ef4444;
+    --chart-5: #8b5cf6;
+
+    /* Sidebar */
+    --sidebar: #ffffff;
+    --sidebar-foreground: #0a0a0a;
+
+    /* RGB variants */
+    --primary-rgb: 10 102 255;
+    --foreground-rgb: 10 10 10;
+    --background-rgb: 255 255 255; /* Branco absoluto */
+
+    /* CANTA Extended Palette - Baseado no Guia de Marca */
+    --canta-preto: #000000; /* 50% - Cor dominante - Preto absoluto */
+    --canta-branco: #ffffff; /* 30% - Cor de apoio - Branco absoluto */
+    --canta-azul: oklch(0.5 0.25 250); /* 10% - Cor de destaque */
+    --canta-cinza: oklch(0.7 0.01 0); /* 5% - Elementos neutros */
+    --canta-magenta: oklch(0.6 0.25 350); /* 5% - Cor de apoio */
+
+    /* Variações para diferentes contextos */
+    --canta-azul-light: oklch(0.7 0.2 250);
+    --canta-azul-dark: oklch(0.3 0.3 250);
+    --canta-cinza-light: oklch(0.9 0.01 0);
+    --canta-cinza-dark: oklch(0.3 0.01 0);
+
+    /* Typography Scale - CANTA Design System */
+    --font-family-sans: "Inter", system-ui, -apple-system, sans-serif;
+    --font-family-heading: "Inter", system-ui, -apple-system, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+
+    /* Sidebar Colors - CANTA Theme */
+    --sidebar-primary: oklch(0.5 0.25 250); /* Azul CANTA */
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(0.95 0.01 0);
+    --sidebar-accent-foreground: oklch(0 0 0);
+    --sidebar-border: oklch(0.9 0.01 0);
+    --sidebar-ring: oklch(0.5 0.25 250);
+
+    /* Typography Scale - CANTA Design System */
+    --font-family-sans: "Inter", system-ui, -apple-system, sans-serif;
+    --font-family-heading: "Inter", system-ui, -apple-system, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+
+    /* Sidebar Colors */
+    --sidebar-primary: oklch(0.645 0.246 16.439);
+    --sidebar-primary-foreground: oklch(0.969 0.015 12.422);
+    --sidebar-accent: oklch(0.967 0.001 286.375);
+    --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+    --sidebar-border: oklch(0.92 0.004 286.32);
+    --sidebar-ring: oklch(0.645 0.246 16.439);
+  }
+
+  .dark {
+    /* EnvDiff Dark Theme - RIMG+ Style */
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #fafafa;
+    --card: #18181b;
+    --card-foreground: #fafafa;
+    --popover: #18181b;
+    --popover-foreground: #fafafa;
+
+    /* RIMG+ Primary - Azul mais claro para dark mode */
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+
+    /* Secondary & Muted */
+    --secondary: #27272a;
+    --secondary-foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --accent: #27272a;
+    --accent-foreground: #fafafa;
+
+    /* Destructive */
+    --destructive: #f87171;
+    --destructive-foreground: #ffffff;
+
+    /* Borders & Inputs */
+    --border: #27272a;
+    --input: #27272a;
+    --ring: #3b82f6;
+
+    /* Chart Colors */
+    --chart-1: #3b82f6;
+    --chart-2: #10b981;
+    --chart-3: #f59e0b;
+    --chart-4: #f87171;
+    --chart-5: #8b5cf6;
+
+    --sidebar: #0a0a0a;
+    --sidebar-foreground: #fafafa;
+
+    /* RGB variants */
+    --primary-rgb: 59 130 246;
+    --foreground-rgb: 250 250 250;
+    --background-rgb: 10 10 10;
+
+    /* CANTA Dark Extended Palette */
+    --canta-preto: #000000; /* Preto absoluto */
+    --canta-branco: #ffffff; /* Branco absoluto */
+    --canta-azul: oklch(0.6 0.25 250); /* Azul claro para contraste */
+    --canta-cinza: oklch(0.3 0.01 0); /* Cinza escuro */
+    --canta-magenta: oklch(0.7 0.25 350); /* Magenta claro */
+
+    --sidebar-primary: oklch(0.6 0.25 250);
+    --sidebar-primary-foreground: #000000;
+    --sidebar-accent: oklch(0.1 0.01 0);
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #333333;
+    --sidebar-ring: oklch(0.6 0.25 250);
+  }
+
+  /* Custom Scrollbar - CANTA Theme */
+  ::-webkit-scrollbar {
+    width: 0.75rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 1.25rem;
+    border: 3px solid var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #ff3264;
+  }
+
+  /* Custom Text Selection - CANTA Colors */
+  ::selection {
+    background-color: #ff3264;
+    color: #ffffff;
+  }
+
+  .text-primary::selection {
+    background-color: var(--primary);
+    color: #ffffff;
+  }
+
+  ::-webkit-selection {
+    background-color: #ff3264;
+    color: #ffffff;
+  }
+
+  .text-primary::-webkit-selection {
+    background-color: var(--primary);
+    color: #ffffff;
+  }
+
+  ::-moz-selection {
+    background-color: #ff3264;
+    color: #ffffff;
+  }
+
+  .text-primary::-moz-selection {
+    background-color: var(--primary);
+    color: #ffffff;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-variant-ligatures: common-ligatures discretionary-ligatures;
+    -webkit-text-size-adjust: 100%;
+    font-family: var(--font-family-sans);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+    font-family: var(--font-family-sans);
+    line-height: 1.6;
+  }
+
+  /* CANTA Typography Hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-family-heading);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: var(--font-size-4xl);
+  }
+  h2 {
+    font-size: var(--font-size-3xl);
+  }
+  h3 {
+    font-size: var(--font-size-2xl);
+  }
+  h4 {
+    font-size: var(--font-size-xl);
+  }
+  h5 {
+    font-size: var(--font-size-lg);
+  }
+  h6 {
+    font-size: var(--font-size-base);
+  }
+
+  button {
+    cursor: pointer;
+    font-family: var(--font-family-sans);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .fill-foreground {
+    fill: var(--foreground);
+  }
+
+  .fill-primary {
+    fill: var(--primary);
+  }
+
+  .fill-background {
+    fill: var(--background);
+  }
+
+  /* Custom text color classes that work with TailwindCSS v4.x */
+  .text-primary {
+    color: var(--primary) !important;
+  }
+
+  .text-muted-foreground {
+    color: var(--muted-foreground) !important;
+  }
+
+  .text-secondary-foreground {
+    color: var(--secondary-foreground) !important;
+  }
+
+  .text-foreground {
+    color: var(--foreground) !important;
+  }
+
+  .text-primary-foreground {
+    color: var(--primary-foreground) !important;
+  }
+
+  /* Background color classes */
+  .bg-primary {
+    background-color: var(--primary) !important;
+  }
+
+  .bg-secondary {
+    background-color: var(--secondary) !important;
+  }
+
+  .bg-muted {
+    background-color: var(--muted) !important;
+  }
+
+  /* Border color classes */
+  .border-primary {
+    border-color: var(--primary) !important;
+  }
+
+  .border-primary\/10 {
+    border-color: color-mix(
+      in srgb,
+      var(--primary) 10%,
+      transparent
+    ) !important;
+  }
+
+  .border-primary\/20 {
+    border-color: color-mix(
+      in srgb,
+      var(--primary) 20%,
+      transparent
+    ) !important;
+  }
+
+  /* Background border class for separator */
+  .bg-border {
+    background-color: var(--border) !important;
+    opacity: 0.8;
+  }
+
+  .border {
+    border-color: var(--border) !important;
+  }
+
+  /* Additional separator visibility */
+  .bg-muted-foreground\/25 {
+    background-color: color-mix(
+      in srgb,
+      var(--muted-foreground) 25%,
+      transparent
+    ) !important;
+  }
+
+  .border-muted-foreground\/25 {
+    border-color: color-mix(
+      in srgb,
+      var(--muted-foreground) 25%,
+      transparent
+    ) !important;
+  }
+
+  .hover\:border-primary\/50:hover {
+    border-color: color-mix(
+      in srgb,
+      var(--primary) 50%,
+      transparent
+    ) !important;
+  }
+
+  .hover\:bg-muted\/50:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--muted) 50%,
+      transparent
+    ) !important;
+  }
+
+  /* CANTA Brand Colors - Baseado no Guia de Marca */
+  .text-canta-preto {
+    color: var(--canta-preto) !important;
+  }
+
+  .bg-canta-preto {
+    background-color: var(--canta-preto) !important;
+  }
+
+  .border-canta-preto {
+    border-color: var(--canta-preto) !important;
+  }
+
+  .text-canta-branco {
+    color: var(--canta-branco) !important;
+  }
+
+  .bg-canta-branco {
+    background-color: var(--canta-branco) !important;
+  }
+
+  .text-canta-azul {
+    color: var(--canta-azul) !important;
+  }
+
+  .bg-canta-azul {
+    background-color: var(--canta-azul) !important;
+  }
+
+  .border-canta-azul {
+    border-color: var(--canta-azul) !important;
+  }
+
+  .text-canta-cinza {
+    color: var(--canta-cinza) !important;
+  }
+
+  .bg-canta-cinza {
+    background-color: var(--canta-cinza) !important;
+  }
+
+  .text-canta-magenta {
+    color: var(--canta-magenta) !important;
+  }
+
+  .bg-canta-magenta {
+    background-color: var(--canta-magenta) !important;
+  }
+
+  .border-canta-magenta {
+    border-color: var(--canta-magenta) !important;
+  }
+
+  /* Variações de transparência seguindo o guia de uso */
+  .bg-canta-azul\/10 {
+    background-color: color-mix(
+      in srgb,
+      var(--canta-azul) 10%,
+      transparent
+    ) !important;
+  }
+
+  .bg-canta-magenta\/5 {
+    background-color: color-mix(
+      in srgb,
+      var(--canta-magenta) 5%,
+      transparent
+    ) !important;
+  }
+
+  .bg-canta-cinza\/5 {
+    background-color: color-mix(
+      in srgb,
+      var(--canta-cinza) 5%,
+      transparent
+    ) !important;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 8s ease infinite;
+  }
+
+  /* Hover effects com preenchimento animado #ff3264 */
+  .nav-link {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ff3264;
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::before {
+    width: 100%;
+  }
+
+  .nav-link:hover {
+    color: #ff3264;
+  }
+
+  .icon-hover {
+    transition: all 0.3s ease;
+  }
+
+  .icon-hover:hover {
+    color: #ff3264;
+    filter: drop-shadow(0 0 8px rgba(255, 50, 100, 0.3));
+  }
+
+  .logo-hover {
+    transition: all 0.3s ease;
+    filter: brightness(1);
+  }
+
+  .logo-hover:hover {
+    filter: brightness(1.1) drop-shadow(0 0 10px rgba(255, 50, 100, 0.2));
+  }
+
+  /* Background fill hover effect for shaped buttons */
+  .hover-animated-bg {
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .hover-animated-bg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #ff3264;
+    transition: width 0.3s ease;
+    z-index: -1;
+  }
+
+  .hover-animated-bg:hover::before {
+    width: 100%;
+  }
+
+  .hover-animated-bg:hover {
+    color: white;
+  }
+
+  /* Simple icon hover effect for download buttons */
+  .download-button:hover .icon-hover {
+    transform: scale(1.1);
+    color: #ff3264;
+    filter: drop-shadow(0 0 8px rgba(255, 50, 100, 0.4));
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Select components z-index fix */
+@layer components {
+  /* Simpler, cleaner approach for select dropdown z-index */
+  [data-radix-select-content] {
+    z-index: 50 !important;
+  }
+
+  [data-radix-popper-content-wrapper] {
+    z-index: 50 !important;
+  }
+}
+
+/* BProgress Custom Styles - CANTA Theme */
+@layer components {
+  /* Progress bar container */
+  #bprogress {
+    pointer-events: none;
+  }
+
+  #bprogress .bar {
+    background: linear-gradient(90deg, #ff3264 0%, #ff4d7a 50%, #ff6b8d 100%);
+    position: fixed;
+    z-index: 1031;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    box-shadow:
+      0 0 10px rgba(255, 50, 100, 0.6),
+      0 0 5px rgba(255, 50, 100, 0.4);
+    animation: bprogress-glow 2s ease-in-out infinite alternate;
+  }
+
+  #bprogress .peg {
+    display: block;
+    position: absolute;
+    right: 0px;
+    width: 100px;
+    height: 100%;
+    background: linear-gradient(
+      -45deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transform: rotate(3deg) translate(0px, -4px);
+    animation: bprogress-shine 1s ease-in-out infinite;
+  }
+
+  /* Glow animation for the progress bar */
+  @keyframes bprogress-glow {
+    0% {
+      box-shadow:
+        0 0 5px rgba(255, 50, 100, 0.4),
+        0 0 10px rgba(255, 50, 100, 0.2);
+    }
+    100% {
+      box-shadow:
+        0 0 20px rgba(255, 50, 100, 0.8),
+        0 0 30px rgba(255, 50, 100, 0.4);
+    }
+  }
+
+  /* Shine animation for the peg */
+  @keyframes bprogress-shine {
+    0% {
+      opacity: 0.8;
+      transform: rotate(3deg) translate(0px, -4px);
+    }
+    50% {
+      opacity: 1;
+      transform: rotate(3deg) translate(5px, -4px);
+    }
+    100% {
+      opacity: 0.8;
+      transform: rotate(3deg) translate(0px, -4px);
+    }
+  }
+
+  /* Dark mode styles */
+  .dark #bprogress .bar {
+    background: linear-gradient(90deg, #ff3264 0%, #ff4d7a 50%, #ff6b8d 100%);
+    box-shadow:
+      0 0 15px rgba(255, 50, 100, 0.8),
+      0 0 8px rgba(255, 50, 100, 0.6);
+  }
+
+  .dark #bprogress .peg {
+    background: linear-gradient(
+      -45deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+  }
+}
+
+/* Floating Elements Animations */
+@layer components {
+  @keyframes float {
+    0% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.4;
+    }
+    33% {
+      transform: translateY(-10px) rotate(5deg);
+      opacity: 0.7;
+    }
+    66% {
+      transform: translateY(5px) rotate(-3deg);
+      opacity: 0.5;
+    }
+    100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.4;
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Hero Progress Bar Demo */
+  @keyframes hero-progress {
+    0% {
+      width: 0%;
+    }
+    50% {
+      width: 75%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+  .hero-progress-bar {
+    animation: hero-progress 3s ease-in-out infinite;
+  }
+
+  /* Gradient text effect */
+  .gradient-text {
+    background: linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #ff3264 25%,
+      #ffffff 50%,
+      #ff4d7a 75%,
+      #ffffff 100%
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 4s ease-in-out infinite;
+  }
+
+  .dark .gradient-text {
+    background: linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #ff3264 25%,
+      #ffffff 50%,
+      #ff4d7a 75%,
+      #ffffff 100%
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @keyframes gradient-shift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* SVG Line Drawing Animations - Simplified Test */
+  @keyframes draw-line-1 {
+    0% {
+      stroke-dashoffset: 40;
+      opacity: 0.3;
+    }
+    50% {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    100% {
+      stroke-dashoffset: -40;
+      opacity: 0.3;
+    }
+  }
+
+  @keyframes draw-line-2 {
+    0% {
+      stroke-dashoffset: 30;
+      opacity: 0.2;
+    }
+    50% {
+      stroke-dashoffset: 0;
+      opacity: 0.8;
+    }
+    100% {
+      stroke-dashoffset: -30;
+      opacity: 0.2;
+    }
+  }
 }

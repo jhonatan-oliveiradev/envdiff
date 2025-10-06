@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Comparison {
+  id              String   @id @default(cuid())
+  greenUrl        String
+  blueUrl         String
+  viewports       String // JSON serializado
+  ignoreSelectors String? // JSON serializado
+  maskSelectors   String? // JSON serializado
+  pixelThreshold  Float    @default(0.15)
+  visualResults   String? // JSON serializado - paths dos pngs + % por viewport
+  domDiff         String? // JSON serializado
+  httpDiff        String? // JSON serializado
+  status          String   @default("queued") // queued, processing, done, failed
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
