@@ -83,7 +83,7 @@ export default function ManualComparePage() {
 			canvas.height = height;
 			ctx.drawImage(img, 0, 0, width, height);
 
-			// Converte para blob com qualidade ajustada
+			// Converte para blob com qualidade ajustada (sempre PNG para compatibilidade com servidor)
 			canvas.toBlob(
 				(blob) => {
 					if (!blob) {
@@ -91,48 +91,20 @@ export default function ManualComparePage() {
 						return;
 					}
 
-					// Se ainda estiver muito grande, reduz qualidade
-					if (blob.size > 3.5 * 1024 * 1024) {
-						canvas.toBlob(
-							(smallerBlob) => {
-								if (!smallerBlob) {
-									setError("Erro ao comprimir imagem");
-									return;
-								}
-
-								const compressedFile = new File([smallerBlob], file.name, {
-									type: "image/jpeg"
-								});
-
-								if (type === "green") {
-									setGreenImage(compressedFile);
-									setGreenPreview(URL.createObjectURL(smallerBlob));
-								} else {
-									setBlueImage(compressedFile);
-									setBluePreview(URL.createObjectURL(smallerBlob));
-								}
-								setError("");
-							},
-							"image/jpeg",
-							0.6 // Qualidade 60%
-						);
+					const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, '.png'), {
+						type: "image/png"
+					});
+					
+					if (type === "green") {
+						setGreenImage(compressedFile);
+						setGreenPreview(URL.createObjectURL(blob));
 					} else {
-						const compressedFile = new File([blob], file.name, {
-							type: "image/jpeg"
-						});
-
-						if (type === "green") {
-							setGreenImage(compressedFile);
-							setGreenPreview(URL.createObjectURL(blob));
-						} else {
-							setBlueImage(compressedFile);
-							setBluePreview(URL.createObjectURL(blob));
-						}
-						setError("");
+						setBlueImage(compressedFile);
+						setBluePreview(URL.createObjectURL(blob));
 					}
+					setError("");
 				},
-				"image/jpeg",
-				0.85 // Qualidade 85%
+				"image/png" // Sempre PNG para compatibilidade
 			);
 		};
 
