@@ -1,6 +1,20 @@
 # EnvDiff 🔍
 
-**EnvDiff** é uma ferramenta de comparação automática de ambientes web (GREEN e BLUE), especialmente projetada para validação de sincronização entre ambientes de pré-produção e produção.
+<div align="center">
+  <img src="public/logo-dark.svg" alt="EnvDiff Logo" height="80" />
+  
+  <p><strong>Environment Comparison Tool</strong></p>
+  <p>Comparação automática de ambientes web GREEN e BLUE</p>
+  
+  <p>
+    <a href="#-funcionalidades">Funcionalidades</a> •
+    <a href="#-stack-tecnológica">Stack</a> •
+    <a href="#-início-rápido">Quick Start</a> •
+    <a href="LOGO.md">Brand Guidelines</a>
+  </p>
+</div>
+
+---
 
 ## 🎯 Problema que Resolve
 
@@ -33,12 +47,27 @@ Durante o processo de "freezing" e sincronização entre ambientes GREEN e BLUE 
 
 - **Frontend**: Next.js 15 (App Router) + React 19
 - **Estilização**: TailwindCSS 4 + shadcn/ui
-- **Fonte**: Inter (identidade visual RIMG+)
+- **Design System**: RIMG+ compatible (#0A66FF blue)
+- **Fonte**: Inter (Google Fonts)
 - **Automação**: Playwright (screenshots)
 - **Comparação Visual**: pixelmatch + pngjs
 - **Comparação DOM**: JSDOM
-- **Banco de Dados**: Prisma + SQLite (migração fácil para Postgres)
+- **Banco de Dados**: Prisma + PostgreSQL (NeonDB)
 - **Linguagem**: TypeScript
+
+## 🎨 Identidade Visual
+
+O **EnvDiff** usa um design minimalista inspirado no **RIMG+**, com o símbolo matemático **≠** (não igual) como elemento central da marca, representando a essência da comparação de diferenças.
+
+**Recursos visuais:**
+- 📄 [Brand Guidelines](LOGO.md) - Documentação completa do logo
+- 🎨 [Logo Preview](public/logo-preview.html) - Showcase interativo
+- 🔵 Cor primária: `#0A66FF` (Azul RIMG+)
+
+**Componentes disponíveis:**
+- `<LogoWordmark />` - Logo completo "EnvDiff"
+- `<LogoMonogram />` - Logo compacto "E + ≠"
+- `<LogoIcon />` - Ícone circular para favicons
 
 ## 🚀 Como Usar
 
