@@ -91,10 +91,14 @@ export default function ManualComparePage() {
 						return;
 					}
 
-					const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, '.png'), {
-						type: "image/png"
-					});
-					
+					const compressedFile = new File(
+						[blob],
+						file.name.replace(/\.[^.]+$/, ".png"),
+						{
+							type: "image/png"
+						}
+					);
+
 					if (type === "green") {
 						setGreenImage(compressedFile);
 						setGreenPreview(URL.createObjectURL(blob));
