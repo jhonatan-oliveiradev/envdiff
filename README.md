@@ -57,17 +57,18 @@ Durante o processo de "freezing" e sincronização entre ambientes GREEN e BLUE 
 
 ## 🎨 Identidade Visual
 
-O **EnvDiff** usa um design minimalista inspirado no **RIMG+**, com o símbolo matemático **≠** (não igual) como elemento central da marca, representando a essência da comparação de diferenças.
+O **EnvDiff** usa um design minimalista com o símbolo matemático **≠** (não igual) como elemento central da marca, representando a essência da comparação de diferenças.
 
 **Recursos visuais:**
 - 📄 [Brand Guidelines](LOGO.md) - Documentação completa do logo
-- 🎨 [Logo Preview](public/logo-preview.html) - Showcase interativo
-- 🔵 Cor primária: `#0A66FF` (Azul RIMG+)
+- 🔵 Cor primária: `#0A66FF` (Círculo do ícone)
+- 🎀 Cor accent: `#FF3264` (Borda do ícone)
+- � Responsivo: Logo adapta-se a diferentes tamanhos
 
 **Componentes disponíveis:**
-- `<LogoWordmark />` - Logo completo "EnvDiff"
+- `<LogoWordmark />` - Ícone circular + texto "EnvDiff" (responsivo)
 - `<LogoMonogram />` - Logo compacto "E + ≠"
-- `<LogoIcon />` - Ícone circular para favicons
+- `<LogoIcon />` - Ícone circular puro (símbolo ≠)
 
 ## 🚀 Como Usar
 
