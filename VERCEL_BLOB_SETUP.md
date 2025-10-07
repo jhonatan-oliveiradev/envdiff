@@ -44,16 +44,17 @@ BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
 
 **⚠️ IMPORTANTE:** Nunca commite o `.env.local` com tokens reais!
 
-## 📊 Limites do Plano FREE (Hobby)
+## 📊 Limites do Vercel Blob
 
-| Recurso | Limite |
-|---------|--------|
-| **Storage Total** | 500 MB |
-| **Tamanho por Blob** | 5 MB |
-| **Requests/mês** | 1,000 |
-| **Bandwidth/mês** | 1 GB |
+| Plano | Storage Total | Upload Simples | Upload Multipart | Requests/mês | Bandwidth/mês | Timeout |
+|-------|---------------|----------------|------------------|--------------|---------------|---------|
+| **FREE (Hobby)** | 500 MB | 5 MB | **500 MB** | 1,000 | 1 GB | 10s |
+| **Pro** | Ilimitado | 500 MB | **5 GB** | Ilimitado | Ilimitado | 60s |
 
-💡 **Dica:** Se exceder os limites, considere implementar limpeza automática de comparações antigas.
+💡 **Configuração atual:** 
+- Limite de upload: **20 MB por imagem**
+- Timeout: **10 segundos** (plano FREE) ou **60 segundos** (plano Pro)
+- Upload multipart automático para arquivos > 5MB
 
 ## ✅ Verificação
 

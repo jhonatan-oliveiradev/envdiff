@@ -4,8 +4,8 @@ import { comparePixels } from "@/lib/pixel-diff";
 import { put } from "@vercel/blob";
 import { PNG } from "pngjs";
 
-// Configuração para Vercel
-export const maxDuration = 10; // 10 segundos (máximo no plano FREE)
+// Configuração para Vercel (Node.js runtime é necessário para zlib/pngjs)
+export const maxDuration = 60; // 60 segundos (plano Pro) ou 10s (Free)
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 				return NextResponse.json(
 					{
 						error:
-							"As imagens são muito grandes. Por favor, use imagens menores que 4MB cada."
+							"As imagens são muito grandes. Por favor, use imagens menores que 20MB cada."
 					},
 					{ status: 413 }
 				);
@@ -123,20 +123,27 @@ async function processManualComparison(
 			pixelThreshold
 		);
 
-		// Upload para Vercel Blob Storage
+		// Upload para Vercel Blob Storage com multipart (suporta até 500MB no FREE)
 		const [greenBlob, blueBlob, diffBlob] = await Promise.all([
 			put(`comparisons/${comparisonId}/green-manual.png`, greenBuffer, {
 				access: "public",
-				contentType: "image/png"
+				contentType: "image/png",
+				multipart: greenBuffer.length > 5 * 1024 * 1024 // Use multipart se > 5MB
 			}),
 			put(`comparisons/${comparisonId}/blue-manual.png`, blueBuffer, {
 				access: "public",
-				contentType: "image/png"
+				contentType: "image/png",
+				multipart: blueBuffer.length > 5 * 1024 * 1024
 			}),
-			put(`comparisons/${comparisonId}/diff-manual.png`, pixelComparison.diffBuffer, {
-				access: "public",
-				contentType: "image/png"
-			})
+			put(
+				`comparisons/${comparisonId}/diff-manual.png`,
+				pixelComparison.diffBuffer,
+				{
+					access: "public",
+					contentType: "image/png",
+					multipart: pixelComparison.diffBuffer.length > 5 * 1024 * 1024
+				}
+			)
 		]);
 
 		// Calcula total de pixels

@@ -28,11 +28,11 @@ export default function ManualComparePage() {
 			return;
 		}
 
-		// Valida tamanho do arquivo (máximo 4MB - limite do Vercel)
-		const maxSize = 4 * 1024 * 1024; // 4MB em bytes
+		// Valida tamanho do arquivo (máximo 20MB - Vercel Blob com multipart)
+		const maxSize = 20 * 1024 * 1024; // 20MB em bytes
 		if (file.size > maxSize) {
 			setError(
-				`A imagem ${type === "green" ? "GREEN" : "BLUE"} é muito grande. Tamanho máximo: 4MB. Tamanho atual: ${(file.size / 1024 / 1024).toFixed(2)}MB`
+				`A imagem ${type === "green" ? "GREEN" : "BLUE"} é muito grande. Tamanho máximo: 20MB. Tamanho atual: ${(file.size / 1024 / 1024).toFixed(2)}MB`
 			);
 			return;
 		}
