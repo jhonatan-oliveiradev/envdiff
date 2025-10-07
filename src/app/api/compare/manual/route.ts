@@ -5,6 +5,10 @@ import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { PNG } from "pngjs";
 
+// Aumenta o tempo máximo de execução para 60 segundos
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 export async function POST(request: NextRequest) {
 	try {
 		const formData = await request.formData();
@@ -56,8 +60,19 @@ export async function POST(request: NextRequest) {
 		});
 	} catch (error) {
 		console.error("Error creating manual comparison:", error);
+		
+		// Verifica se é erro de tamanho de payload
+		if (error instanceof Error) {
+			if (error.message.includes("payload") || error.message.includes("too large")) {
+				return NextResponse.json(
+					{ error: "As imagens são muito grandes. Por favor, use imagens menores que 10MB cada." },
+					{ status: 413 }
+				);
+			}
+		}
+		
 		return NextResponse.json(
-			{ error: "Internal server error" },
+			{ error: "Erro interno do servidor. Tente novamente." },
 			{ status: 500 }
 		);
 	}

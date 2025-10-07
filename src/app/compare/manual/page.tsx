@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -21,8 +22,18 @@ export default function ManualComparePage() {
 	const [blueDragActive, setBlueDragActive] = useState(false);
 
 	const handleImageUpload = (file: File, type: "green" | "blue") => {
+		// Valida tipo de arquivo
 		if (!file.type.startsWith("image/")) {
 			setError("Por favor, selecione uma imagem válida (PNG, JPG, etc)");
+			return;
+		}
+
+		// Valida tamanho do arquivo (máximo 10MB)
+		const maxSize = 10 * 1024 * 1024; // 10MB em bytes
+		if (file.size > maxSize) {
+			setError(
+				`A imagem ${type === "green" ? "GREEN" : "BLUE"} é muito grande. Tamanho máximo: 10MB. Tamanho atual: ${(file.size / 1024 / 1024).toFixed(2)}MB`
+			);
 			return;
 		}
 
@@ -249,7 +260,7 @@ export default function ManualComparePage() {
 										setBluePreview("");
 									}}
 								>
-									<Upload className="w-4 h-4 mr-2" />
+									<Upload className="size-4 mr-2" />
 									Trocar Imagem
 								</Button>
 								<p className="text-xs text-muted-foreground text-center">
