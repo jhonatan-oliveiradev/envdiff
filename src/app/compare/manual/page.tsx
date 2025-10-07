@@ -7,10 +7,18 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
 import { Upload, Image as ImageIcon, AlertCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+
+interface ComparisonResult {
+	viewport: { width: number; height: number };
+	greenScreenshot: string;
+	blueScreenshot: string;
+	diffScreenshot: string;
+	diffPixels: number;
+	totalPixels: number;
+	diffPercentage: number;
+}
 
 export default function ManualComparePage() {
-	const router = useRouter();
 	const [greenImage, setGreenImage] = useState<File | null>(null);
 	const [blueImage, setBlueImage] = useState<File | null>(null);
 	const [greenPreview, setGreenPreview] = useState<string>("");
@@ -20,6 +28,7 @@ export default function ManualComparePage() {
 	const [error, setError] = useState("");
 	const [greenDragActive, setGreenDragActive] = useState(false);
 	const [blueDragActive, setBlueDragActive] = useState(false);
+	const [result, setResult] = useState<ComparisonResult | null>(null);
 
 	const handleImageUpload = (file: File, type: "green" | "blue") => {
 		// Valida tipo de arquivo
@@ -90,6 +99,7 @@ export default function ManualComparePage() {
 
 		setIsProcessing(true);
 		setError("");
+		setResult(null); // Limpa resultado anterior
 
 		try {
 			const formData = new FormData();
@@ -107,8 +117,8 @@ export default function ManualComparePage() {
 				throw new Error(error.error || "Erro ao processar comparação");
 			}
 
-			const result = await response.json();
-			router.push(`/comparisons/${result.id}`);
+			const comparisonResult = await response.json();
+			setResult(comparisonResult); // Armazena o resultado para exibir inline
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Erro desconhecido");
 		} finally {
@@ -316,6 +326,69 @@ export default function ManualComparePage() {
 						</>
 					)}
 				</Button>
+
+				{/* Resultado da Comparação */}
+				{result && (
+					<Card className="mt-8 p-6">
+						<h2 className="text-2xl font-bold mb-4">Resultado da Comparação</h2>
+						
+						<div className="mb-4 p-4 bg-muted rounded-lg">
+							<div className="grid grid-cols-2 gap-4 text-sm">
+								<div>
+									<span className="text-muted-foreground">Dimensões:</span>
+									<p className="font-mono font-semibold">
+										{result.viewport.width}x{result.viewport.height}
+									</p>
+								</div>
+								<div>
+									<span className="text-muted-foreground">Diferença:</span>
+									<p className="font-mono font-semibold text-red-500">
+										{result.diffPercentage.toFixed(2)}%
+									</p>
+								</div>
+								<div>
+									<span className="text-muted-foreground">Pixels diferentes:</span>
+									<p className="font-mono font-semibold">
+										{result.diffPixels.toLocaleString()}
+									</p>
+								</div>
+								<div>
+									<span className="text-muted-foreground">Total de pixels:</span>
+									<p className="font-mono font-semibold">
+										{result.totalPixels.toLocaleString()}
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div className="grid md:grid-cols-3 gap-4">
+							<div>
+								<h3 className="text-sm font-semibold mb-2">GREEN</h3>
+								<img
+									src={result.greenScreenshot}
+									alt="GREEN screenshot"
+									className="w-full border rounded"
+								/>
+							</div>
+							<div>
+								<h3 className="text-sm font-semibold mb-2">BLUE</h3>
+								<img
+									src={result.blueScreenshot}
+									alt="BLUE screenshot"
+									className="w-full border rounded"
+								/>
+							</div>
+							<div>
+								<h3 className="text-sm font-semibold mb-2 text-red-500">DIFF</h3>
+								<img
+									src={result.diffScreenshot}
+									alt="DIFF screenshot"
+									className="w-full border rounded"
+								/>
+							</div>
+						</div>
+					</Card>
+				)}
 
 				{/* Info Box */}
 				<div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/50 rounded-lg">
