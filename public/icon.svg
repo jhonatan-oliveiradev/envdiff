@@ -1,0 +1,14 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- EnvDiff Icon - Circular -->
+  <!-- Blue circle background -->
+  <circle cx="32" cy="32" r="32" fill="#0A66FF"/>
+  
+  <!-- ≠ symbol in white -->
+  <g fill="white">
+    <!-- Diagonal line -->
+    <rect x="30" y="18" width="4" height="28" transform="rotate(20 32 32)"/>
+    <!-- Horizontal lines -->
+    <rect x="18" y="24" width="28" height="4"/>
+    <rect x="18" y="36" width="28" height="4"/>
+  </g>
+</svg>

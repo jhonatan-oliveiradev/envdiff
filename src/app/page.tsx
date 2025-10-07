@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Upload } from "lucide-react";
+import { LogoWordmark } from "@/components/logo-envdiff";
 
 export default function Home() {
 	const router = useRouter();
@@ -73,34 +74,22 @@ export default function Home() {
 	return (
 		<div className="min-h-screen bg-background p-8">
 			<div className="mx-auto max-w-4xl space-y-8">
-				<div className="flex items-center gap-4">
-					<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							className="h-6 w-6 text-primary-foreground"
-						>
-							<path d="M21 12a9 9 0 1 1-6.219-8.56" />
-							<circle cx="12" cy="12" r="1" />
-						</svg>
-					</div>
-					<div className="flex-1">
-						<h1 className="text-3xl font-bold tracking-tight">EnvDiff</h1>
+				<div className="flex items-center justify-between gap-4">
+					<div className="space-y-2">
+						<LogoWordmark className="h-10 w-auto" />
 						<p className="text-muted-foreground">
 							Comparação automática de ambientes GREEN e BLUE
 						</p>
 					</div>
-					<Link href="/compare/manual">
-						<Button variant="outline" size="lg">
-							<Upload className="w-4 h-4 mr-2" />
-							Comparação Manual
-						</Button>
-					</Link>
+					<div className="flex items-center gap-3">
+						<Badge variant="outline">v1.0.0</Badge>
+						<Link href="/compare/manual">
+							<Button variant="outline" size="lg">
+								<Upload className="w-4 h-4 mr-2" />
+								Comparação Manual
+							</Button>
+						</Link>
+					</div>
 				</div>
 
 				<Card>

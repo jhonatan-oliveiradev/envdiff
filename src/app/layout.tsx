@@ -9,7 +9,12 @@ const inter = Inter({
 
 export const metadata: Metadata = {
 	title: "EnvDiff - Environment Comparison Tool",
-	description: "Compare GREEN and BLUE environments visually and structurally"
+	description: "Compare GREEN and BLUE environments visually and structurally",
+	icons: {
+		icon: [
+			{ url: "/icon.svg", type: "image/svg+xml" },
+		],
+	},
 };
 
 export default function RootLayout({

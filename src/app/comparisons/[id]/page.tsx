@@ -229,7 +229,9 @@ export default function ComparisonPage() {
 									<p className="text-destructive font-semibold mb-2">
 										Falha ao processar comparação
 									</p>
-									{data.visualResults && typeof data.visualResults === 'object' && 'error' in data.visualResults ? (
+									{data.visualResults &&
+									typeof data.visualResults === "object" &&
+									"error" in data.visualResults ? (
 										<p className="text-sm text-muted-foreground max-w-md mx-auto">
 											{data.visualResults.error}
 										</p>
@@ -253,64 +255,65 @@ export default function ComparisonPage() {
 						</TabsList>
 
 						<TabsContent value="visual" className="space-y-6">
-							{Array.isArray(data.visualResults) && data.visualResults.map((result, index) => (
-								<Card key={index}>
-									<CardHeader>
-										<div className="flex items-center justify-between">
-											<CardTitle>
-												{result.viewport.width}x{result.viewport.height}
-											</CardTitle>
-											{getDiffBadge(result.diffPercentage)}
-										</div>
-										<CardDescription>
-											{result.diffPixels.toLocaleString()} pixels diferentes de{" "}
-											{result.totalPixels.toLocaleString()} totais
-										</CardDescription>
-									</CardHeader>
-									<CardContent className="space-y-6">
-										<div className="grid gap-4 md:grid-cols-3">
-											<div className="space-y-2">
-												<h3 className="text-sm font-medium">GREEN</h3>
-												<div className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
-													<Image
-														src={result.greenScreenshot}
-														alt="GREEN screenshot"
-														fill
-														className="object-contain"
-														unoptimized
-													/>
-												</div>
+							{Array.isArray(data.visualResults) &&
+								data.visualResults.map((result, index) => (
+									<Card key={index}>
+										<CardHeader>
+											<div className="flex items-center justify-between">
+												<CardTitle>
+													{result.viewport.width}x{result.viewport.height}
+												</CardTitle>
+												{getDiffBadge(result.diffPercentage)}
 											</div>
+											<CardDescription>
+												{result.diffPixels.toLocaleString()} pixels diferentes
+												de {result.totalPixels.toLocaleString()} totais
+											</CardDescription>
+										</CardHeader>
+										<CardContent className="space-y-6">
+											<div className="grid gap-4 md:grid-cols-3">
+												<div className="space-y-2">
+													<h3 className="text-sm font-medium">GREEN</h3>
+													<div className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
+														<Image
+															src={result.greenScreenshot}
+															alt="GREEN screenshot"
+															fill
+															className="object-contain"
+															unoptimized
+														/>
+													</div>
+												</div>
 
-											<div className="space-y-2">
-												<h3 className="text-sm font-medium">BLUE</h3>
-												<div className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
-													<Image
-														src={result.blueScreenshot}
-														alt="BLUE screenshot"
-														fill
-														className="object-contain"
-														unoptimized
-													/>
+												<div className="space-y-2">
+													<h3 className="text-sm font-medium">BLUE</h3>
+													<div className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
+														<Image
+															src={result.blueScreenshot}
+															alt="BLUE screenshot"
+															fill
+															className="object-contain"
+															unoptimized
+														/>
+													</div>
 												</div>
-											</div>
 
-											<div className="space-y-2">
-												<h3 className="text-sm font-medium">Diferenças</h3>
-												<div className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
-													<Image
-														src={result.diffScreenshot}
-														alt="Diff screenshot"
-														fill
-														className="object-contain"
-														unoptimized
-													/>
+												<div className="space-y-2">
+													<h3 className="text-sm font-medium">Diferenças</h3>
+													<div className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
+														<Image
+															src={result.diffScreenshot}
+															alt="Diff screenshot"
+															fill
+															className="object-contain"
+															unoptimized
+														/>
+													</div>
 												</div>
 											</div>
-										</div>
-									</CardContent>
-								</Card>
-							))}
+										</CardContent>
+									</Card>
+								))}
 						</TabsContent>
 
 						{data.domDiff && (

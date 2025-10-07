@@ -103,7 +103,10 @@ async function processManualComparison(
 		}
 
 		// Verifica se dimensões são iguais
-		if (greenImg.width !== blueImg.width || greenImg.height !== blueImg.height) {
+		if (
+			greenImg.width !== blueImg.width ||
+			greenImg.height !== blueImg.height
+		) {
 			throw new Error(
 				`As imagens devem ter as mesmas dimensões. GREEN: ${greenImg.width}x${greenImg.height}, BLUE: ${blueImg.width}x${blueImg.height}`
 			);
