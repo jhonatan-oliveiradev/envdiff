@@ -1,366 +1,415 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EnvDiff Logo Preview</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>EnvDiff Logo Preview</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f5f5f5;
-        }
+			body {
+				font-family:
+					"Inter",
+					-apple-system,
+					BlinkMacSystemFont,
+					"Segoe UI",
+					sans-serif;
+				line-height: 1.6;
+				color: #333;
+				background: #f5f5f5;
+			}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 40px 20px;
+			}
 
-        header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
+			header {
+				text-align: center;
+				margin-bottom: 60px;
+			}
 
-        header h1 {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #0A66FF;
-        }
+			header h1 {
+				font-size: 48px;
+				font-weight: 700;
+				margin-bottom: 16px;
+				color: #0a66ff;
+			}
 
-        header p {
-            font-size: 18px;
-            color: #666;
-        }
+			header p {
+				font-size: 18px;
+				color: #666;
+			}
 
-        .section {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+			.section {
+				background: white;
+				border-radius: 12px;
+				padding: 40px;
+				margin-bottom: 40px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
 
-        .section h2 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #111;
-        }
+			.section h2 {
+				font-size: 28px;
+				font-weight: 600;
+				margin-bottom: 24px;
+				color: #111;
+			}
 
-        .logo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-            margin-top: 32px;
-        }
+			.logo-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 32px;
+				margin-top: 32px;
+			}
 
-        .logo-card {
-            text-align: center;
-            padding: 32px;
-            border-radius: 8px;
-            border: 2px solid #e5e5e5;
-            transition: all 0.3s ease;
-        }
+			.logo-card {
+				text-align: center;
+				padding: 32px;
+				border-radius: 8px;
+				border: 2px solid #e5e5e5;
+				transition: all 0.3s ease;
+			}
 
-        .logo-card:hover {
-            border-color: #0A66FF;
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(10, 102, 255, 0.15);
-        }
+			.logo-card:hover {
+				border-color: #0a66ff;
+				transform: translateY(-4px);
+				box-shadow: 0 8px 16px rgba(10, 102, 255, 0.15);
+			}
 
-        .logo-card h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #666;
-        }
+			.logo-card h3 {
+				font-size: 16px;
+				font-weight: 600;
+				margin-bottom: 16px;
+				color: #666;
+			}
 
-        .logo-card img {
-            margin: 0 auto;
-            display: block;
-        }
+			.logo-card img {
+				margin: 0 auto;
+				display: block;
+			}
 
-        .logo-card code {
-            display: block;
-            margin-top: 16px;
-            padding: 8px 12px;
-            background: #f5f5f5;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #666;
-            font-family: 'Monaco', 'Courier New', monospace;
-        }
+			.logo-card code {
+				display: block;
+				margin-top: 16px;
+				padding: 8px 12px;
+				background: #f5f5f5;
+				border-radius: 4px;
+				font-size: 12px;
+				color: #666;
+				font-family: "Monaco", "Courier New", monospace;
+			}
 
-        .bg-dark {
-            background: #111;
-        }
+			.bg-dark {
+				background: #111;
+			}
 
-        .bg-light {
-            background: #f5f5f5;
-        }
+			.bg-light {
+				background: #f5f5f5;
+			}
 
-        .bg-blue {
-            background: #0A66FF;
-        }
+			.bg-blue {
+				background: #0a66ff;
+			}
 
-        .color-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
-            margin-top: 24px;
-        }
+			.color-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+				gap: 24px;
+				margin-top: 24px;
+			}
 
-        .color-card {
-            text-align: center;
-        }
+			.color-card {
+				text-align: center;
+			}
 
-        .color-box {
-            height: 120px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 18px;
-        }
+			.color-box {
+				height: 120px;
+				border-radius: 8px;
+				margin-bottom: 12px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				font-weight: 600;
+				font-size: 18px;
+			}
 
-        .color-info {
-            font-size: 14px;
-            color: #666;
-        }
+			.color-info {
+				font-size: 14px;
+				color: #666;
+			}
 
-        .color-info strong {
-            display: block;
-            color: #111;
-            margin-bottom: 4px;
-        }
+			.color-info strong {
+				display: block;
+				color: #111;
+				margin-bottom: 4px;
+			}
 
-        .usage-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-top: 24px;
-        }
+			.usage-grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 24px;
+				margin-top: 24px;
+			}
 
-        .usage-card {
-            padding: 24px;
-            background: #f9f9f9;
-            border-radius: 8px;
-        }
+			.usage-card {
+				padding: 24px;
+				background: #f9f9f9;
+				border-radius: 8px;
+			}
 
-        .usage-card h4 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #111;
-        }
+			.usage-card h4 {
+				font-size: 16px;
+				font-weight: 600;
+				margin-bottom: 12px;
+				color: #111;
+			}
 
-        .usage-card ul {
-            list-style: none;
-            padding-left: 0;
-        }
+			.usage-card ul {
+				list-style: none;
+				padding-left: 0;
+			}
 
-        .usage-card li {
-            padding: 8px 0;
-            color: #666;
-            font-size: 14px;
-        }
+			.usage-card li {
+				padding: 8px 0;
+				color: #666;
+				font-size: 14px;
+			}
 
-        .usage-card li::before {
-            content: "✓ ";
-            color: #0A66FF;
-            font-weight: bold;
-            margin-right: 8px;
-        }
+			.usage-card li::before {
+				content: "✓ ";
+				color: #0a66ff;
+				font-weight: bold;
+				margin-right: 8px;
+			}
 
-        .code-block {
-            background: #111;
-            color: #e5e5e5;
-            padding: 24px;
-            border-radius: 8px;
-            margin-top: 24px;
-            overflow-x: auto;
-        }
+			.code-block {
+				background: #111;
+				color: #e5e5e5;
+				padding: 24px;
+				border-radius: 8px;
+				margin-top: 24px;
+				overflow-x: auto;
+			}
 
-        .code-block pre {
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+			.code-block pre {
+				font-family: "Monaco", "Courier New", monospace;
+				font-size: 14px;
+				line-height: 1.6;
+			}
 
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #0A66FF;
-            color: white;
-            border-radius: 16px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 12px;
-        }
+			.badge {
+				display: inline-block;
+				padding: 4px 12px;
+				background: #0a66ff;
+				color: white;
+				border-radius: 16px;
+				font-size: 12px;
+				font-weight: 600;
+				margin-left: 12px;
+			}
 
-        @media (max-width: 768px) {
-            .logo-grid {
-                grid-template-columns: 1fr;
-            }
+			@media (max-width: 768px) {
+				.logo-grid {
+					grid-template-columns: 1fr;
+				}
 
-            .usage-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>EnvDiff Logo</h1>
-            <p>Sistema de identidade visual minimalista inspirado em RIMG+</p>
-        </header>
+				.usage-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>EnvDiff Logo</h1>
+				<p>Sistema de identidade visual minimalista inspirado em RIMG+</p>
+			</header>
 
-        <!-- Logo Variants -->
-        <div class="section">
-            <h2>Variações do Logo</h2>
-            <div class="logo-grid">
-                <div class="logo-card bg-dark">
-                    <h3>Wordmark Dark</h3>
-                    <img src="logo-dark.svg" alt="EnvDiff Logo Dark" height="60">
-                    <code>logo-dark.svg</code>
-                </div>
+			<!-- Logo Variants -->
+			<div class="section">
+				<h2>Variações do Logo</h2>
+				<div class="logo-grid">
+					<div class="logo-card bg-dark">
+						<h3>Wordmark Dark</h3>
+						<img src="logo-dark.svg" alt="EnvDiff Logo Dark" height="60" />
+						<code>logo-dark.svg</code>
+					</div>
 
-                <div class="logo-card bg-light">
-                    <h3>Wordmark Light</h3>
-                    <img src="logo-light.svg" alt="EnvDiff Logo Light" height="60">
-                    <code>logo-light.svg</code>
-                </div>
+					<div class="logo-card bg-light">
+						<h3>Wordmark Light</h3>
+						<img src="logo-light.svg" alt="EnvDiff Logo Light" height="60" />
+						<code>logo-light.svg</code>
+					</div>
 
-                <div class="logo-card bg-dark">
-                    <h3>Icon</h3>
-                    <img src="icon.svg" alt="EnvDiff Icon" width="80" height="80">
-                    <code>icon.svg</code>
-                </div>
-            </div>
-        </div>
+					<div class="logo-card bg-dark">
+						<h3>Icon</h3>
+						<img src="icon.svg" alt="EnvDiff Icon" width="80" height="80" />
+						<code>icon.svg</code>
+					</div>
+				</div>
+			</div>
 
-        <!-- Color Palette -->
-        <div class="section">
-            <h2>Paleta de Cores <span class="badge">RIMG+ Compatible</span></h2>
-            <div class="color-grid">
-                <div class="color-card">
-                    <div class="color-box" style="background: #0A66FF;">
-                        #0A66FF
-                    </div>
-                    <div class="color-info">
-                        <strong>Primary Blue</strong>
-                        Símbolo ≠ e elementos principais
-                    </div>
-                </div>
+			<!-- Color Palette -->
+			<div class="section">
+				<h2>Paleta de Cores <span class="badge">RIMG+ Compatible</span></h2>
+				<div class="color-grid">
+					<div class="color-card">
+						<div class="color-box" style="background: #0a66ff">#0A66FF</div>
+						<div class="color-info">
+							<strong>Primary Blue</strong>
+							Símbolo ≠ e elementos principais
+						</div>
+					</div>
 
-                <div class="color-card">
-                    <div class="color-box" style="background: #111; color: white;">
-                        #111111
-                    </div>
-                    <div class="color-info">
-                        <strong>Dark Background</strong>
-                        Modo escuro (padrão)
-                    </div>
-                </div>
+					<div class="color-card">
+						<div class="color-box" style="background: #111; color: white">
+							#111111
+						</div>
+						<div class="color-info">
+							<strong>Dark Background</strong>
+							Modo escuro (padrão)
+						</div>
+					</div>
 
-                <div class="color-card">
-                    <div class="color-box" style="background: #FFFFFF; color: #111; border: 2px solid #e5e5e5;">
-                        #FFFFFF
-                    </div>
-                    <div class="color-info">
-                        <strong>Light Background</strong>
-                        Modo claro
-                    </div>
-                </div>
-            </div>
-        </div>
+					<div class="color-card">
+						<div
+							class="color-box"
+							style="
+								background: #ffffff;
+								color: #111;
+								border: 2px solid #e5e5e5;
+							"
+						>
+							#FFFFFF
+						</div>
+						<div class="color-info">
+							<strong>Light Background</strong>
+							Modo claro
+						</div>
+					</div>
+				</div>
+			</div>
 
-        <!-- Symbol -->
-        <div class="section">
-            <h2>Símbolo de Identidade</h2>
-            <div style="text-align: center; padding: 40px;">
-                <svg width="120" height="120" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="32" r="32" fill="#0A66FF"/>
-                    <g fill="white">
-                        <rect x="30" y="18" width="4" height="28" transform="rotate(20 32 32)"/>
-                        <rect x="18" y="24" width="28" height="4"/>
-                        <rect x="18" y="36" width="28" height="4"/>
-                    </g>
-                </svg>
-                <h3 style="margin-top: 24px; color: #0A66FF; font-size: 48px; font-weight: 700;">≠</h3>
-                <p style="color: #666; margin-top: 12px;">Símbolo de "não igual" representa a comparação de diferenças</p>
-            </div>
-        </div>
+			<!-- Symbol -->
+			<div class="section">
+				<h2>Símbolo de Identidade</h2>
+				<div style="text-align: center; padding: 40px">
+					<svg
+						width="120"
+						height="120"
+						viewBox="0 0 64 64"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<circle cx="32" cy="32" r="32" fill="#0A66FF" />
+						<g fill="white">
+							<rect
+								x="30"
+								y="18"
+								width="4"
+								height="28"
+								transform="rotate(20 32 32)"
+							/>
+							<rect x="18" y="24" width="28" height="4" />
+							<rect x="18" y="36" width="28" height="4" />
+						</g>
+					</svg>
+					<h3
+						style="
+							margin-top: 24px;
+							color: #0a66ff;
+							font-size: 48px;
+							font-weight: 700;
+						"
+					>
+						≠
+					</h3>
+					<p style="color: #666; margin-top: 12px">
+						Símbolo de "não igual" representa a comparação de diferenças
+					</p>
+				</div>
+			</div>
 
-        <!-- Usage Guidelines -->
-        <div class="section">
-            <h2>Diretrizes de Uso</h2>
-            <div class="usage-grid">
-                <div class="usage-card" style="background: #e8f5e9;">
-                    <h4 style="color: #2e7d32;">✔️ Permitido</h4>
-                    <ul>
-                        <li>Usar cores oficiais</li>
-                        <li>Escalar proporcionalmente</li>
-                        <li>Usar em fundos contrastantes</li>
-                        <li>Combinar com RIMG+ design</li>
-                    </ul>
-                </div>
+			<!-- Usage Guidelines -->
+			<div class="section">
+				<h2>Diretrizes de Uso</h2>
+				<div class="usage-grid">
+					<div class="usage-card" style="background: #e8f5e9">
+						<h4 style="color: #2e7d32">✔️ Permitido</h4>
+						<ul>
+							<li>Usar cores oficiais</li>
+							<li>Escalar proporcionalmente</li>
+							<li>Usar em fundos contrastantes</li>
+							<li>Combinar com RIMG+ design</li>
+						</ul>
+					</div>
 
-                <div class="usage-card" style="background: #ffebee;">
-                    <h4 style="color: #c62828;">❌ Não Permitido</h4>
-                    <ul style="color: #c62828;">
-                        <li>Alterar cores do símbolo ≠</li>
-                        <li>Distorcer proporções</li>
-                        <li>Adicionar efeitos (sombras)</li>
-                        <li>Rotacionar ou espelhar</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+					<div class="usage-card" style="background: #ffebee">
+						<h4 style="color: #c62828">❌ Não Permitido</h4>
+						<ul style="color: #c62828">
+							<li>Alterar cores do símbolo ≠</li>
+							<li>Distorcer proporções</li>
+							<li>Adicionar efeitos (sombras)</li>
+							<li>Rotacionar ou espelhar</li>
+						</ul>
+					</div>
+				</div>
+			</div>
 
-        <!-- Code Examples -->
-        <div class="section">
-            <h2>Exemplos de Código</h2>
-            
-            <h3 style="margin-top: 32px; margin-bottom: 16px; font-size: 18px;">React/Next.js</h3>
-            <div class="code-block">
-                <pre>import { LogoWordmark, LogoIcon } from "@/components/logo-envdiff";
+			<!-- Code Examples -->
+			<div class="section">
+				<h2>Exemplos de Código</h2>
+
+				<h3 style="margin-top: 32px; margin-bottom: 16px; font-size: 18px">
+					React/Next.js
+				</h3>
+				<div class="code-block">
+					<pre>
+import { LogoWordmark, LogoIcon } from "@/components/logo-envdiff";
 
 // Logo completo
 &lt;LogoWordmark className="h-10 w-auto" /&gt;
 
 // Ícone circular
-&lt;LogoIcon className="h-8 w-8" /&gt;</pre>
-            </div>
+&lt;LogoIcon className="h-8 w-8" /&gt;</pre
+					>
+				</div>
 
-            <h3 style="margin-top: 32px; margin-bottom: 16px; font-size: 18px;">HTML</h3>
-            <div class="code-block">
-                <pre>&lt;!-- Logo dark mode --&gt;
+				<h3 style="margin-top: 32px; margin-bottom: 16px; font-size: 18px">
+					HTML
+				</h3>
+				<div class="code-block">
+					<pre>
+&lt;!-- Logo dark mode --&gt;
 &lt;img src="/logo-dark.svg" alt="EnvDiff" height="40" /&gt;
 
 &lt;!-- Favicon --&gt;
-&lt;link rel="icon" type="image/svg+xml" href="/icon.svg" /&gt;</pre>
-            </div>
-        </div>
+&lt;link rel="icon" type="image/svg+xml" href="/icon.svg" /&gt;</pre
+					>
+				</div>
+			</div>
 
-        <!-- Footer -->
-        <div style="text-align: center; padding: 40px 0; color: #666;">
-            <p>© 2024 EnvDiff - Created by <a href="https://github.com/jhonatan-oliveiradev" style="color: #0A66FF; text-decoration: none;">Jhonatan Oliveira</a></p>
-            <p style="margin-top: 8px; font-size: 14px;">Design inspired by <strong>RIMG+</strong></p>
-        </div>
-    </div>
-</body>
+			<!-- Footer -->
+			<div style="text-align: center; padding: 40px 0; color: #666">
+				<p>
+					© 2024 EnvDiff - Created by
+					<a
+						href="https://github.com/jhonatan-oliveiradev"
+						style="color: #0a66ff; text-decoration: none"
+						>Jhonatan Oliveira</a
+					>
+				</p>
+				<p style="margin-top: 8px; font-size: 14px">
+					Design inspired by <strong>RIMG+</strong>
+				</p>
+			</div>
+		</div>
+	</body>
 </html>
