@@ -37,7 +37,7 @@ interface ComparisonData {
 	status: string;
 	greenUrl: string;
 	blueUrl: string;
-	visualResults?: ViewportResult[];
+	visualResults?: ViewportResult[] | { error: string; timestamp: string };
 	domDiff?: DomDiffItem[];
 	createdAt: string;
 }
@@ -210,9 +210,38 @@ export default function ComparisonPage() {
 					<Card>
 						<CardContent className="py-12">
 							<div className="text-center space-y-4">
-								<p className="text-destructive">
-									Falha ao processar comparação
-								</p>
+								<div className="rounded-full bg-red-500/10 w-16 h-16 flex items-center justify-center mx-auto">
+									<svg
+										className="w-8 h-8 text-red-500"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M6 18L18 6M6 6l12 12"
+										/>
+									</svg>
+								</div>
+								<div>
+									<p className="text-destructive font-semibold mb-2">
+										Falha ao processar comparação
+									</p>
+									{data.visualResults && typeof data.visualResults === 'object' && 'error' in data.visualResults ? (
+										<p className="text-sm text-muted-foreground max-w-md mx-auto">
+											{data.visualResults.error}
+										</p>
+									) : (
+										<p className="text-sm text-muted-foreground">
+											Erro desconhecido. Tente novamente ou verifique os logs.
+										</p>
+									)}
+								</div>
+								<Button asChild variant="outline">
+									<Link href="/compare/manual">Tentar Novamente</Link>
+								</Button>
 							</div>
 						</CardContent>
 					</Card>
@@ -224,7 +253,7 @@ export default function ComparisonPage() {
 						</TabsList>
 
 						<TabsContent value="visual" className="space-y-6">
-							{data.visualResults?.map((result, index) => (
+							{Array.isArray(data.visualResults) && data.visualResults.map((result, index) => (
 								<Card key={index}>
 									<CardHeader>
 										<div className="flex items-center justify-between">

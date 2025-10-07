@@ -3,15 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { comparePixels } from "@/lib/pixel-diff";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
+import { PNG } from "pngjs";
 
 export async function POST(request: NextRequest) {
 	try {
 		const formData = await request.formData();
 		const greenImage = formData.get("greenImage") as File;
 		const blueImage = formData.get("blueImage") as File;
-		const pixelThreshold = parseFloat(
-			formData.get("pixelThreshold") as string
-		);
+		const pixelThreshold = parseFloat(formData.get("pixelThreshold") as string);
 
 		if (!greenImage || !blueImage) {
 			return NextResponse.json(
@@ -44,9 +43,12 @@ export async function POST(request: NextRequest) {
 		});
 
 		// Processa em background
-		processManualComparison(comparison.id, greenImage, blueImage, pixelThreshold).catch(
-			console.error
-		);
+		processManualComparison(
+			comparison.id,
+			greenImage,
+			blueImage,
+			pixelThreshold
+		).catch(console.error);
 
 		return NextResponse.json({
 			id: comparison.id,
@@ -89,6 +91,24 @@ async function processManualComparison(
 		await writeFile(greenPath, greenBuffer);
 		await writeFile(bluePath, blueBuffer);
 
+		// Valida dimensões antes de comparar
+		let greenImg, blueImg;
+		try {
+			greenImg = PNG.sync.read(greenBuffer);
+			blueImg = PNG.sync.read(blueBuffer);
+		} catch {
+			throw new Error(
+				"Erro ao ler imagens. Certifique-se de que são PNG, JPG ou WebP válidos."
+			);
+		}
+
+		// Verifica se dimensões são iguais
+		if (greenImg.width !== blueImg.width || greenImg.height !== blueImg.height) {
+			throw new Error(
+				`As imagens devem ter as mesmas dimensões. GREEN: ${greenImg.width}x${greenImg.height}, BLUE: ${blueImg.width}x${blueImg.height}`
+			);
+		}
+
 		// Compara pixels
 		const pixelComparison = comparePixels(
 			greenBuffer,
@@ -127,10 +147,25 @@ async function processManualComparison(
 	} catch (error) {
 		console.error("Error processing manual comparison:", error);
 
+		// Mensagem de erro mais específica
+		let errorMessage = "Erro desconhecido ao processar comparação";
+		if (error instanceof Error) {
+			errorMessage = error.message;
+			console.error("Detailed error:", {
+				message: error.message,
+				stack: error.stack
+			});
+		}
+
 		await prisma.comparison.update({
 			where: { id: comparisonId },
 			data: {
-				status: "failed"
+				status: "failed",
+				// Armazena erro nos visualResults para debug
+				visualResults: JSON.stringify({
+					error: errorMessage,
+					timestamp: new Date().toISOString()
+				})
 			}
 		});
 	}

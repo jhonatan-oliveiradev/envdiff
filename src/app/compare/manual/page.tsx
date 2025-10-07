@@ -18,10 +18,7 @@ export default function ManualComparePage() {
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [error, setError] = useState("");
 
-	const handleImageUpload = (
-		file: File,
-		type: "green" | "blue"
-	) => {
+	const handleImageUpload = (file: File, type: "green" | "blue") => {
 		if (!file.type.startsWith("image/")) {
 			setError("Por favor, selecione uma imagem válida (PNG, JPG, etc)");
 			return;
@@ -104,7 +101,7 @@ export default function ManualComparePage() {
 						<Label className="text-lg font-semibold mb-4 block">
 							Screenshot GREEN
 						</Label>
-						
+
 						{!greenPreview ? (
 							<label className="cursor-pointer">
 								<div className="border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary/50 transition-colors">
@@ -159,7 +156,7 @@ export default function ManualComparePage() {
 						<Label className="text-lg font-semibold mb-4 block">
 							Screenshot BLUE
 						</Label>
-						
+
 						{!bluePreview ? (
 							<label className="cursor-pointer">
 								<div className="border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary/50 transition-colors">
@@ -258,9 +255,7 @@ export default function ManualComparePage() {
 
 				{/* Info Box */}
 				<div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/50 rounded-lg">
-					<h3 className="font-semibold mb-2 text-blue-400">
-						💡 Como funciona
-					</h3>
+					<h3 className="font-semibold mb-2 text-blue-400">💡 Como funciona</h3>
 					<ul className="text-sm text-muted-foreground space-y-1">
 						<li>• Faça upload de dois screenshots para comparar</li>
 						<li>• Ajuste a sensibilidade conforme necessário</li>
