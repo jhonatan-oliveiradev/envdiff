@@ -37,7 +37,7 @@ export default function ManualComparePage() {
 			return;
 		}
 
-		// Valida tamanho do arquivo (máximo 20MB - Vercel Blob com multipart)
+		// Valida tamanho do arquivo (máximo 20MB antes da compressão)
 		const maxSize = 20 * 1024 * 1024; // 20MB em bytes
 		if (file.size > maxSize) {
 			setError(
@@ -46,17 +46,96 @@ export default function ManualComparePage() {
 			return;
 		}
 
+		// Comprime a imagem para caber no limite do Vercel (4MB)
+		const img = new Image();
 		const reader = new FileReader();
+		
 		reader.onloadend = () => {
-			if (type === "green") {
-				setGreenImage(file);
-				setGreenPreview(reader.result as string);
-			} else {
-				setBlueImage(file);
-				setBluePreview(reader.result as string);
-			}
-			setError("");
+			img.src = reader.result as string;
 		};
+		
+		img.onload = () => {
+			// Cria canvas para redimensionar/comprimir
+			const canvas = document.createElement("canvas");
+			const ctx = canvas.getContext("2d");
+			
+			if (!ctx) {
+				setError("Erro ao processar imagem");
+				return;
+			}
+
+			// Calcula dimensões mantendo aspect ratio
+			let width = img.width;
+			let height = img.height;
+			const maxDimension = 1920; // Máximo 1920px
+
+			if (width > maxDimension || height > maxDimension) {
+				if (width > height) {
+					height = (height / width) * maxDimension;
+					width = maxDimension;
+				} else {
+					width = (width / height) * maxDimension;
+					height = maxDimension;
+				}
+			}
+
+			canvas.width = width;
+			canvas.height = height;
+			ctx.drawImage(img, 0, 0, width, height);
+
+			// Converte para blob com qualidade ajustada
+			canvas.toBlob(
+				(blob) => {
+					if (!blob) {
+						setError("Erro ao comprimir imagem");
+						return;
+					}
+
+					// Se ainda estiver muito grande, reduz qualidade
+					if (blob.size > 3.5 * 1024 * 1024) {
+						canvas.toBlob(
+							(smallerBlob) => {
+								if (!smallerBlob) {
+									setError("Erro ao comprimir imagem");
+									return;
+								}
+								
+								const compressedFile = new File([smallerBlob], file.name, {
+									type: "image/jpeg"
+								});
+								
+								if (type === "green") {
+									setGreenImage(compressedFile);
+									setGreenPreview(URL.createObjectURL(smallerBlob));
+								} else {
+									setBlueImage(compressedFile);
+									setBluePreview(URL.createObjectURL(smallerBlob));
+								}
+								setError("");
+							},
+							"image/jpeg",
+							0.6 // Qualidade 60%
+						);
+					} else {
+						const compressedFile = new File([blob], file.name, {
+							type: "image/jpeg"
+						});
+						
+						if (type === "green") {
+							setGreenImage(compressedFile);
+							setGreenPreview(URL.createObjectURL(blob));
+						} else {
+							setBlueImage(compressedFile);
+							setBluePreview(URL.createObjectURL(blob));
+						}
+						setError("");
+					}
+				},
+				"image/jpeg",
+				0.85 // Qualidade 85%
+			);
+		};
+
 		reader.readAsDataURL(file);
 	};
 
@@ -331,7 +410,7 @@ export default function ManualComparePage() {
 				{result && (
 					<Card className="mt-8 p-6">
 						<h2 className="text-2xl font-bold mb-4">Resultado da Comparação</h2>
-						
+
 						<div className="mb-4 p-4 bg-muted rounded-lg">
 							<div className="grid grid-cols-2 gap-4 text-sm">
 								<div>
@@ -347,13 +426,17 @@ export default function ManualComparePage() {
 									</p>
 								</div>
 								<div>
-									<span className="text-muted-foreground">Pixels diferentes:</span>
+									<span className="text-muted-foreground">
+										Pixels diferentes:
+									</span>
 									<p className="font-mono font-semibold">
 										{result.diffPixels.toLocaleString()}
 									</p>
 								</div>
 								<div>
-									<span className="text-muted-foreground">Total de pixels:</span>
+									<span className="text-muted-foreground">
+										Total de pixels:
+									</span>
 									<p className="font-mono font-semibold">
 										{result.totalPixels.toLocaleString()}
 									</p>
@@ -379,7 +462,9 @@ export default function ManualComparePage() {
 								/>
 							</div>
 							<div>
-								<h3 className="text-sm font-semibold mb-2 text-red-500">DIFF</h3>
+								<h3 className="text-sm font-semibold mb-2 text-red-500">
+									DIFF
+								</h3>
 								<img
 									src={result.diffScreenshot}
 									alt="DIFF screenshot"
