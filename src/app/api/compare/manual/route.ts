@@ -122,21 +122,24 @@ async function processManualComparison(
 		// Salva diff visual
 		await writeFile(diffPath, pixelComparison.diffBuffer);
 
+		// Calcula total de pixels
+		const totalPixels = greenImg.width * greenImg.height;
+
 		// Monta resultado
 		const visualResult = {
-			viewport: "manual",
-			greenUrl: isProduction
+			viewport: { width: greenImg.width, height: greenImg.height },
+			greenScreenshot: isProduction
 				? `/api/screenshots/${comparisonId}/green-manual.png`
 				: `/screenshots/${comparisonId}/green-manual.png`,
-			blueUrl: isProduction
+			blueScreenshot: isProduction
 				? `/api/screenshots/${comparisonId}/blue-manual.png`
 				: `/screenshots/${comparisonId}/blue-manual.png`,
-			diffUrl: isProduction
+			diffScreenshot: isProduction
 				? `/api/screenshots/${comparisonId}/diff-manual.png`
 				: `/screenshots/${comparisonId}/diff-manual.png`,
 			diffPixels: pixelComparison.diffPixels,
-			diffPercentage: pixelComparison.diffPercentage,
-			passed: pixelComparison.diffPercentage < 0.5 // 0.5% threshold
+			totalPixels: totalPixels,
+			diffPercentage: pixelComparison.diffPercentage
 		};
 
 		// Atualiza registro com resultados

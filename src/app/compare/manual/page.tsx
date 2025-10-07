@@ -17,6 +17,8 @@ export default function ManualComparePage() {
 	const [pixelThreshold, setPixelThreshold] = useState(0.15);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [error, setError] = useState("");
+	const [greenDragActive, setGreenDragActive] = useState(false);
+	const [blueDragActive, setBlueDragActive] = useState(false);
 
 	const handleImageUpload = (file: File, type: "green" | "blue") => {
 		if (!file.type.startsWith("image/")) {
@@ -36,6 +38,37 @@ export default function ManualComparePage() {
 			setError("");
 		};
 		reader.readAsDataURL(file);
+	};
+
+	const handleDrag = (
+		e: React.DragEvent,
+		type: "green" | "blue",
+		isEnter: boolean
+	) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (type === "green") {
+			setGreenDragActive(isEnter);
+		} else {
+			setBlueDragActive(isEnter);
+		}
+	};
+
+	const handleDrop = (e: React.DragEvent, type: "green" | "blue") => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (type === "green") {
+			setGreenDragActive(false);
+		} else {
+			setBlueDragActive(false);
+		}
+
+		const file = e.dataTransfer.files?.[0];
+		if (file) {
+			handleImageUpload(file, type);
+		}
 	};
 
 	const handleCompare = async () => {
@@ -104,10 +137,20 @@ export default function ManualComparePage() {
 
 						{!greenPreview ? (
 							<label className="cursor-pointer">
-								<div className="border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary/50 transition-colors">
+								<div
+									className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+										greenDragActive
+											? "border-primary bg-primary/5"
+											: "border-border hover:border-primary/50"
+									}`}
+									onDragEnter={(e) => handleDrag(e, "green", true)}
+									onDragLeave={(e) => handleDrag(e, "green", false)}
+									onDragOver={(e) => e.preventDefault()}
+									onDrop={(e) => handleDrop(e, "green")}
+								>
 									<Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
 									<p className="text-sm text-muted-foreground mb-2">
-										Clique para fazer upload
+										Clique ou arraste uma imagem aqui
 									</p>
 									<p className="text-xs text-muted-foreground">
 										PNG, JPG ou WebP
@@ -159,10 +202,20 @@ export default function ManualComparePage() {
 
 						{!bluePreview ? (
 							<label className="cursor-pointer">
-								<div className="border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary/50 transition-colors">
+								<div
+									className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+										blueDragActive
+											? "border-primary bg-primary/5"
+											: "border-border hover:border-primary/50"
+									}`}
+									onDragEnter={(e) => handleDrag(e, "blue", true)}
+									onDragLeave={(e) => handleDrag(e, "blue", false)}
+									onDragOver={(e) => e.preventDefault()}
+									onDrop={(e) => handleDrop(e, "blue")}
+								>
 									<Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
 									<p className="text-sm text-muted-foreground mb-2">
-										Clique para fazer upload
+										Clique ou arraste uma imagem aqui
 									</p>
 									<p className="text-xs text-muted-foreground">
 										PNG, JPG ou WebP
