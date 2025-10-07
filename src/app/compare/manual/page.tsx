@@ -49,16 +49,16 @@ export default function ManualComparePage() {
 		// Comprime a imagem para caber no limite do Vercel (4MB)
 		const img = new Image();
 		const reader = new FileReader();
-		
+
 		reader.onloadend = () => {
 			img.src = reader.result as string;
 		};
-		
+
 		img.onload = () => {
 			// Cria canvas para redimensionar/comprimir
 			const canvas = document.createElement("canvas");
 			const ctx = canvas.getContext("2d");
-			
+
 			if (!ctx) {
 				setError("Erro ao processar imagem");
 				return;
@@ -99,11 +99,11 @@ export default function ManualComparePage() {
 									setError("Erro ao comprimir imagem");
 									return;
 								}
-								
+
 								const compressedFile = new File([smallerBlob], file.name, {
 									type: "image/jpeg"
 								});
-								
+
 								if (type === "green") {
 									setGreenImage(compressedFile);
 									setGreenPreview(URL.createObjectURL(smallerBlob));
@@ -120,7 +120,7 @@ export default function ManualComparePage() {
 						const compressedFile = new File([blob], file.name, {
 							type: "image/jpeg"
 						});
-						
+
 						if (type === "green") {
 							setGreenImage(compressedFile);
 							setGreenPreview(URL.createObjectURL(blob));
