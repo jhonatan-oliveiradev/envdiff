@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { comparePixels } from "@/lib/pixel-diff";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { put } from "@vercel/blob";
 import { PNG } from "pngjs";
 
-// Aumenta o tempo máximo de execução para 60 segundos
-export const maxDuration = 60;
+// Configuração para Vercel
+export const maxDuration = 10; // 10 segundos (máximo no plano FREE)
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
@@ -46,31 +45,38 @@ export async function POST(request: NextRequest) {
 			}
 		});
 
-		// Processa em background
-		processManualComparison(
+		// Processa SÍNCRONO (não background) para garantir conclusão em <10s
+		await processManualComparison(
 			comparison.id,
 			greenImage,
 			blueImage,
 			pixelThreshold
-		).catch(console.error);
+		);
 
 		return NextResponse.json({
 			id: comparison.id,
-			status: "processing"
+			status: "completed"
 		});
 	} catch (error) {
 		console.error("Error creating manual comparison:", error);
-		
+
 		// Verifica se é erro de tamanho de payload
 		if (error instanceof Error) {
-			if (error.message.includes("payload") || error.message.includes("too large")) {
+			if (
+				error.message.includes("payload") ||
+				error.message.includes("too large") ||
+				error.message.includes("body size")
+			) {
 				return NextResponse.json(
-					{ error: "As imagens são muito grandes. Por favor, use imagens menores que 10MB cada." },
+					{
+						error:
+							"As imagens são muito grandes. Por favor, use imagens menores que 4MB cada."
+					},
 					{ status: 413 }
 				);
 			}
 		}
-		
+
 		return NextResponse.json(
 			{ error: "Erro interno do servidor. Tente novamente." },
 			{ status: 500 }
@@ -85,26 +91,9 @@ async function processManualComparison(
 	pixelThreshold: number
 ) {
 	try {
-		// Detecta ambiente (produção vs desenvolvimento)
-		const isProduction = process.env.VERCEL === "1";
-		const screenshotsDir = isProduction
-			? join("/tmp", "screenshots", comparisonId)
-			: join(process.cwd(), "public", "screenshots", comparisonId);
-
-		await mkdir(screenshotsDir, { recursive: true });
-
 		// Converte arquivos para Buffer
 		const greenBuffer = Buffer.from(await greenImage.arrayBuffer());
 		const blueBuffer = Buffer.from(await blueImage.arrayBuffer());
-
-		// Paths dos arquivos
-		const greenPath = join(screenshotsDir, "green-manual.png");
-		const bluePath = join(screenshotsDir, "blue-manual.png");
-		const diffPath = join(screenshotsDir, "diff-manual.png");
-
-		// Salva imagens originais
-		await writeFile(greenPath, greenBuffer);
-		await writeFile(bluePath, blueBuffer);
 
 		// Valida dimensões antes de comparar
 		let greenImg, blueImg;
@@ -134,24 +123,31 @@ async function processManualComparison(
 			pixelThreshold
 		);
 
-		// Salva diff visual
-		await writeFile(diffPath, pixelComparison.diffBuffer);
+		// Upload para Vercel Blob Storage
+		const [greenBlob, blueBlob, diffBlob] = await Promise.all([
+			put(`comparisons/${comparisonId}/green-manual.png`, greenBuffer, {
+				access: "public",
+				contentType: "image/png"
+			}),
+			put(`comparisons/${comparisonId}/blue-manual.png`, blueBuffer, {
+				access: "public",
+				contentType: "image/png"
+			}),
+			put(`comparisons/${comparisonId}/diff-manual.png`, pixelComparison.diffBuffer, {
+				access: "public",
+				contentType: "image/png"
+			})
+		]);
 
 		// Calcula total de pixels
 		const totalPixels = greenImg.width * greenImg.height;
 
-		// Monta resultado
+		// Monta resultado com URLs do Blob
 		const visualResult = {
 			viewport: { width: greenImg.width, height: greenImg.height },
-			greenScreenshot: isProduction
-				? `/api/screenshots/${comparisonId}/green-manual.png`
-				: `/screenshots/${comparisonId}/green-manual.png`,
-			blueScreenshot: isProduction
-				? `/api/screenshots/${comparisonId}/blue-manual.png`
-				: `/screenshots/${comparisonId}/blue-manual.png`,
-			diffScreenshot: isProduction
-				? `/api/screenshots/${comparisonId}/diff-manual.png`
-				: `/screenshots/${comparisonId}/diff-manual.png`,
+			greenScreenshot: greenBlob.url,
+			blueScreenshot: blueBlob.url,
+			diffScreenshot: diffBlob.url,
 			diffPixels: pixelComparison.diffPixels,
 			totalPixels: totalPixels,
 			diffPercentage: pixelComparison.diffPercentage
@@ -189,5 +185,8 @@ async function processManualComparison(
 				})
 			}
 		});
+
+		// Re-lança o erro para ser capturado pelo handler principal
+		throw error;
 	}
 }
