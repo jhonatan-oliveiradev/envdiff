@@ -370,24 +370,31 @@ export default function ManualComparePage() {
 						</div>
 
 						{/* Validação de Dimensões */}
-						<div className="flex items-center justify-between space-x-4 pt-4 border-t">
-							<div className="flex-1 space-y-1">
-								<Label
-									htmlFor="strict-dimensions"
-									className="text-sm font-medium cursor-pointer"
-								>
-									Validação Estrita de Dimensões
-								</Label>
-								<p className="text-xs text-muted-foreground">
-									Quando ativado, aceita diferença de até 3px nas dimensões.
-									Desative para comparar imagens com dimensões diferentes.
-								</p>
+						<div className="pt-4 border-t">
+							<div className="flex items-center justify-between gap-4">
+								<div className="flex-1">
+									<div className="flex items-center gap-2 mb-1">
+										<Label
+											htmlFor="strict-dimensions"
+											className="text-sm font-medium cursor-pointer"
+										>
+											Validação Estrita de Dimensões
+										</Label>
+										<span className={`text-xs px-2 py-0.5 rounded-full ${strictDimensions ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
+											{strictDimensions ? 'Ativado' : 'Desativado'}
+										</span>
+									</div>
+									<p className="text-xs text-muted-foreground">
+										Quando ativado, aceita diferença de até 3px nas dimensões.
+										Desative para comparar imagens com dimensões diferentes.
+									</p>
+								</div>
+								<Switch
+									id="strict-dimensions"
+									checked={strictDimensions}
+									onCheckedChange={setStrictDimensions}
+								/>
 							</div>
-							<Switch
-								id="strict-dimensions"
-								checked={strictDimensions}
-								onCheckedChange={setStrictDimensions}
-							/>
 						</div>
 					</div>
 				</Card>
