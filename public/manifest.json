@@ -1,0 +1,39 @@
+{
+	"name": "EnvDiff - Comparador de Screenshots",
+	"short_name": "EnvDiff",
+	"description": "Compare screenshots GREEN vs BLUE e visualize diferenças pixel a pixel",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#0a0a0a",
+	"theme_color": "#0a0a0a",
+	"orientation": "portrait-primary",
+	"icons": [
+		{
+			"src": "/icon-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/icon-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	],
+	"categories": ["utilities", "productivity"],
+	"shortcuts": [
+		{
+			"name": "Nova Comparação Manual",
+			"short_name": "Comparar",
+			"description": "Fazer upload e comparar duas imagens",
+			"url": "/compare/manual",
+			"icons": [
+				{
+					"src": "/icon-192x192.png",
+					"sizes": "192x192"
+				}
+			]
+		}
+	]
+}

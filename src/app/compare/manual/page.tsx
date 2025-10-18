@@ -372,11 +372,15 @@ export default function ManualComparePage() {
 						{/* Validação de Dimensões */}
 						<div className="flex items-center justify-between space-x-4 pt-4 border-t">
 							<div className="flex-1 space-y-1">
-								<Label htmlFor="strict-dimensions" className="text-sm font-medium cursor-pointer">
+								<Label
+									htmlFor="strict-dimensions"
+									className="text-sm font-medium cursor-pointer"
+								>
 									Validação Estrita de Dimensões
 								</Label>
 								<p className="text-xs text-muted-foreground">
-									Quando ativado, aceita diferença de até 3px nas dimensões. Desative para comparar imagens com dimensões diferentes.
+									Quando ativado, aceita diferença de até 3px nas dimensões.
+									Desative para comparar imagens com dimensões diferentes.
 								</p>
 							</div>
 							<Switch

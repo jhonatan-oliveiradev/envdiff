@@ -32,6 +32,9 @@ Durante o processo de "freezing" e sincronização entre ambientes GREEN e BLUE 
 - ✅ **Relatórios Visuais**: Interface intuitiva para visualizar diferenças
 - ✅ **Múltiplos Viewports**: Suporte para desktop (1366x768)
 - ✅ **Autenticação Liferay**: Login automático em ambientes STG protegidos
+- ✅ **PWA (Progressive Web App)**: Instale como app nativo no seu dispositivo
+- ✅ **Uso Offline**: Funcionalidades básicas disponíveis sem internet
+- ✅ **Tolerância de Dimensões**: Aceita até 3px de diferença nas dimensões das imagens
 
 ### Próximas Funcionalidades
 
@@ -192,6 +195,57 @@ envdiff/
 │   └── schema.prisma             # Schema do banco
 └── public/
     └── screenshots/              # Screenshots gerados
+```
+
+---
+
+## 📱 Progressive Web App (PWA)
+
+O **EnvDiff** pode ser instalado como um aplicativo nativo no seu dispositivo!
+
+### Benefícios do PWA
+
+- ⚡ **Acesso Rápido**: Ícone na tela inicial do dispositivo
+- 📴 **Uso Offline**: Funcionalidades básicas disponíveis sem internet
+- 🚀 **Desempenho**: Carregamento mais rápido com cache inteligente
+- 📱 **Experiência Nativa**: Interface sem barras do navegador
+
+### Como Instalar
+
+#### No Desktop (Chrome/Edge)
+
+1. Acesse o EnvDiff
+2. Clique no ícone de instalação (➕) na barra de endereços
+3. Ou clique no prompt que aparece no canto inferior direito
+4. Confirme a instalação
+
+#### No Mobile (Android/iOS)
+
+**Android (Chrome):**
+1. Acesse o EnvDiff
+2. Toque no menu (⋮) > "Instalar app" ou "Adicionar à tela inicial"
+3. Confirme a instalação
+
+**iOS (Safari):**
+1. Acesse o EnvDiff
+2. Toque em "Compartilhar" (📤)
+3. Role para baixo e toque em "Adicionar à Tela de Início"
+4. Confirme
+
+### Recursos PWA
+
+- ✅ Ícones otimizados (192x192, 512x512)
+- ✅ Service Worker para cache
+- ✅ Manifest.json configurado
+- ✅ Prompt de instalação customizado
+- ✅ Suporte offline para páginas visitadas
+
+### Gerando Ícones PWA
+
+Se precisar regenerar os ícones:
+
+```bash
+npm run generate:icons
 ```
 
 ---
