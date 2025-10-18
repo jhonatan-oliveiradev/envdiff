@@ -12,7 +12,8 @@ interface BeforeInstallPromptEvent extends Event {
 
 export function PWAInstallPrompt() {
 	const [showPrompt, setShowPrompt] = useState(false);
-	const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+	const [deferredPrompt, setDeferredPrompt] =
+		useState<BeforeInstallPromptEvent | null>(null);
 
 	useEffect(() => {
 		const handler = (e: Event) => {
@@ -37,7 +38,7 @@ export function PWAInstallPrompt() {
 
 		// Aguarda a escolha do usuário
 		const { outcome } = await deferredPrompt.userChoice;
-		
+
 		console.log(`User response to install prompt: ${outcome}`);
 
 		// Limpa o prompt
@@ -79,11 +80,7 @@ export function PWAInstallPrompt() {
 			</div>
 
 			<div className="flex gap-2">
-				<Button
-					onClick={handleInstall}
-					size="sm"
-					className="flex-1"
-				>
+				<Button onClick={handleInstall} size="sm" className="flex-1">
 					Instalar
 				</Button>
 				<Button
