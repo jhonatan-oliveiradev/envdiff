@@ -380,8 +380,10 @@ export default function ManualComparePage() {
 										>
 											Validação Estrita de Dimensões
 										</Label>
-										<span className={`text-xs px-2 py-0.5 rounded-full ${strictDimensions ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
-											{strictDimensions ? 'Ativado' : 'Desativado'}
+										<span
+											className={`text-xs px-2 py-0.5 rounded-full ${strictDimensions ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}
+										>
+											{strictDimensions ? "Ativado" : "Desativado"}
 										</span>
 									</div>
 									<p className="text-xs text-muted-foreground">

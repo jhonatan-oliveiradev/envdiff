@@ -108,20 +108,57 @@ async function processManualComparison(
 	}
 	// Se strictDimensions = false, aceita qualquer dimensão
 
-	// Se as dimensões forem diferentes (mas dentro da tolerância ou modo não-estrito),
-	// redimensiona para a menor dimensão comum
-	const minWidth = Math.min(greenImg.width, blueImg.width);
-	const minHeight = Math.min(greenImg.height, blueImg.height);
+	// Se as dimensões forem diferentes, redimensiona para a menor dimensão comum
+	let greenBufferToCompare: Buffer = greenBuffer;
+	let blueBufferToCompare: Buffer = blueBuffer;
+	let comparisonWidth = greenImg.width;
+	let comparisonHeight = greenImg.height;
 
-	// Compara pixels usando as dimensões menores
+	if (widthDiff > 0 || heightDiff > 0) {
+		// Precisa redimensionar para as dimensões menores
+		const minWidth = Math.min(greenImg.width, blueImg.width);
+		const minHeight = Math.min(greenImg.height, blueImg.height);
+
+		// Cria novas imagens com as dimensões menores
+		const greenResized = new PNG({ width: minWidth, height: minHeight });
+		const blueResized = new PNG({ width: minWidth, height: minHeight });
+
+		// Copia os pixels da área comum
+		for (let y = 0; y < minHeight; y++) {
+			for (let x = 0; x < minWidth; x++) {
+				const idxSrc = (y * greenImg.width + x) << 2;
+				const idxDst = (y * minWidth + x) << 2;
+
+				// Copia GREEN
+				greenResized.data[idxDst] = greenImg.data[idxSrc];
+				greenResized.data[idxDst + 1] = greenImg.data[idxSrc + 1];
+				greenResized.data[idxDst + 2] = greenImg.data[idxSrc + 2];
+				greenResized.data[idxDst + 3] = greenImg.data[idxSrc + 3];
+
+				// Copia BLUE
+				const idxSrcBlue = (y * blueImg.width + x) << 2;
+				blueResized.data[idxDst] = blueImg.data[idxSrcBlue];
+				blueResized.data[idxDst + 1] = blueImg.data[idxSrcBlue + 1];
+				blueResized.data[idxDst + 2] = blueImg.data[idxSrcBlue + 2];
+				blueResized.data[idxDst + 3] = blueImg.data[idxSrcBlue + 3];
+			}
+		}
+
+		greenBufferToCompare = Buffer.from(PNG.sync.write(greenResized));
+		blueBufferToCompare = Buffer.from(PNG.sync.write(blueResized));
+		comparisonWidth = minWidth;
+		comparisonHeight = minHeight;
+	}
+
+	// Compara pixels
 	const pixelComparison = comparePixels(
-		greenBuffer,
-		blueBuffer,
+		greenBufferToCompare,
+		blueBufferToCompare,
 		pixelThreshold
 	);
 
 	// Calcula total de pixels baseado nas dimensões usadas na comparação
-	const totalPixels = minWidth * minHeight;
+	const totalPixels = comparisonWidth * comparisonHeight;
 
 	// Retorna resultado com imagens em base64 (SEM salvar)
 	return {
