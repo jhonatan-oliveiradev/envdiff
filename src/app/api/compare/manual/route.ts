@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
 		const greenImage = formData.get("greenImage") as File;
 		const blueImage = formData.get("blueImage") as File;
 		const pixelThreshold = parseFloat(formData.get("pixelThreshold") as string);
+		const strictDimensions = formData.get("strictDimensions") === "true";
 
 		if (!greenImage || !blueImage) {
 			return NextResponse.json(
@@ -36,7 +37,8 @@ export async function POST(request: NextRequest) {
 		const result = await processManualComparison(
 			greenImage,
 			blueImage,
-			pixelThreshold
+			pixelThreshold,
+			strictDimensions
 		);
 
 		return NextResponse.json(result);
@@ -73,7 +75,8 @@ export async function POST(request: NextRequest) {
 async function processManualComparison(
 	greenImage: File,
 	blueImage: File,
-	pixelThreshold: number
+	pixelThreshold: number,
+	strictDimensions: boolean = true
 ) {
 	// Converte arquivos para Buffer
 	const greenBuffer = Buffer.from(await greenImage.arrayBuffer());
@@ -90,22 +93,35 @@ async function processManualComparison(
 		);
 	}
 
-	// Verifica se dimensões são iguais
-	if (greenImg.width !== blueImg.width || greenImg.height !== blueImg.height) {
-		throw new Error(
-			`As imagens devem ter as mesmas dimensões. GREEN: ${greenImg.width}x${greenImg.height}, BLUE: ${blueImg.width}x${blueImg.height}`
-		);
-	}
+	// Verifica dimensões com tolerância ou estritamente
+	const widthDiff = Math.abs(greenImg.width - blueImg.width);
+	const heightDiff = Math.abs(greenImg.height - blueImg.height);
+	const tolerance = 3; // Tolerância de 3px
 
-	// Compara pixels
+	if (strictDimensions) {
+		// Modo estrito: aceita diferença de até 3px
+		if (widthDiff > tolerance || heightDiff > tolerance) {
+			throw new Error(
+				`As imagens têm dimensões muito diferentes. GREEN: ${greenImg.width}x${greenImg.height}, BLUE: ${blueImg.width}x${blueImg.height}. Diferença máxima permitida: ${tolerance}px.`
+			);
+		}
+	}
+	// Se strictDimensions = false, aceita qualquer dimensão
+
+	// Se as dimensões forem diferentes (mas dentro da tolerância ou modo não-estrito),
+	// redimensiona para a menor dimensão comum
+	const minWidth = Math.min(greenImg.width, blueImg.width);
+	const minHeight = Math.min(greenImg.height, blueImg.height);
+
+	// Compara pixels usando as dimensões menores
 	const pixelComparison = comparePixels(
 		greenBuffer,
 		blueBuffer,
 		pixelThreshold
 	);
 
-	// Calcula total de pixels
-	const totalPixels = greenImg.width * greenImg.height;
+	// Calcula total de pixels baseado nas dimensões usadas na comparação
+	const totalPixels = minWidth * minHeight;
 
 	// Retorna resultado com imagens em base64 (SEM salvar)
 	return {

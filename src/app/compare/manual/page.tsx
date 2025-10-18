@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { Upload, Image as ImageIcon, AlertCircle } from "lucide-react";
 
 interface ComparisonResult {
@@ -24,6 +25,7 @@ export default function ManualComparePage() {
 	const [greenPreview, setGreenPreview] = useState<string>("");
 	const [bluePreview, setBluePreview] = useState<string>("");
 	const [pixelThreshold, setPixelThreshold] = useState(0.15);
+	const [strictDimensions, setStrictDimensions] = useState(true);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [error, setError] = useState("");
 	const [greenDragActive, setGreenDragActive] = useState(false);
@@ -161,6 +163,7 @@ export default function ManualComparePage() {
 			formData.append("greenImage", greenImage);
 			formData.append("blueImage", blueImage);
 			formData.append("pixelThreshold", pixelThreshold.toString());
+			formData.append("strictDimensions", strictDimensions.toString());
 
 			const response = await fetch("/api/compare/manual", {
 				method: "POST",
@@ -338,27 +341,50 @@ export default function ManualComparePage() {
 
 				{/* Settings */}
 				<Card className="p-6 mb-8">
-					<Label className="text-base font-semibold mb-4 block">
-						Sensibilidade de Detecção
+					<Label className="text-base font-semibold mb-6 block">
+						Configurações de Comparação
 					</Label>
-					<div className="space-y-4">
-						<div className="flex items-center gap-4">
-							<Slider
-								value={[pixelThreshold]}
-								onValueChange={(value) => setPixelThreshold(value[0])}
-								min={0}
-								max={1}
-								step={0.01}
-								className="flex-1"
-							/>
-							<span className="text-sm font-mono w-12 text-right">
-								{pixelThreshold.toFixed(2)}
-							</span>
+					<div className="space-y-6">
+						{/* Sensibilidade de Detecção */}
+						<div className="space-y-4">
+							<Label className="text-sm font-medium">
+								Sensibilidade de Detecção
+							</Label>
+							<div className="flex items-center gap-4">
+								<Slider
+									value={[pixelThreshold]}
+									onValueChange={(value) => setPixelThreshold(value[0])}
+									min={0}
+									max={1}
+									step={0.01}
+									className="flex-1"
+								/>
+								<span className="text-sm font-mono w-12 text-right">
+									{pixelThreshold.toFixed(2)}
+								</span>
+							</div>
+							<p className="text-xs text-muted-foreground">
+								Valores menores = mais sensível (detecta pequenas diferenças).
+								Valores maiores = menos sensível (ignora pequenas variações).
+							</p>
 						</div>
-						<p className="text-xs text-muted-foreground">
-							Valores menores = mais sensível (detecta pequenas diferenças).
-							Valores maiores = menos sensível (ignora pequenas variações).
-						</p>
+
+						{/* Validação de Dimensões */}
+						<div className="flex items-center justify-between space-x-4 pt-4 border-t">
+							<div className="flex-1 space-y-1">
+								<Label htmlFor="strict-dimensions" className="text-sm font-medium cursor-pointer">
+									Validação Estrita de Dimensões
+								</Label>
+								<p className="text-xs text-muted-foreground">
+									Quando ativado, aceita diferença de até 3px nas dimensões. Desative para comparar imagens com dimensões diferentes.
+								</p>
+							</div>
+							<Switch
+								id="strict-dimensions"
+								checked={strictDimensions}
+								onCheckedChange={setStrictDimensions}
+							/>
+						</div>
 					</div>
 				</Card>
 
